@@ -240,7 +240,7 @@ const index = () => {
 
    const items = [
       { title: "Dashboard", href: "/" },
-      { title: "Salary Slip Create" },
+      { title: "Create Salary Slip" },
    ].map((item, index) => (
       <Anchor href={item.href} key={index}>
          {item.title}
@@ -272,12 +272,12 @@ const index = () => {
 
          <div className="mb-4 d-flex justify-content-between align-items-end">
             <div className="pageTop">
-               <h3>Salary Slip Create</h3>
+               <h3>Create Salary Slip</h3>
                <Breadcrumbs>{items}</Breadcrumbs>
             </div>
 
             <AddButton
-               label="Salary Slip Create"
+               label="Create Salary Slip"
                fontSize="16px"
                icon={<LuPlus className="me-1 fs-5" />}
                handleClick={addOpen}
