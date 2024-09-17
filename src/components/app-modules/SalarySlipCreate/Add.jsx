@@ -22,7 +22,7 @@ const Index = ({ opened, close }) => {
           title: "modalTitle",
         }}
         opened={opened}
-        title="Create Payroll"
+        title="Create Salary Slip"
         onClose={close}
         centered
       >
