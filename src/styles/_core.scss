@@ -75,7 +75,7 @@ P {
 .pageTop a:hover {
   text-decoration: underline;
 }
-.mantine-Breadcrumbs-separator {
+.api-Breadcrumbs-separator {
   opacity: 0.8;
 }
 
@@ -339,8 +339,8 @@ employee manage css end
   // background-color: #f2f2f2 !important;
   background-color: #fffaf4 !important;
 }
-.mantine-datatable-table th,
-.mantine-datatable-table td {
+.api-datatable-table th,
+.api-datatable-table td {
   border-color: #f1eae6 !important;
   white-space: normal !important;
   word-break: break-word !important;
@@ -451,4 +451,30 @@ employee manage css end
 .user_select_item_icon {
   color: #000;
   opacity: 0.4;
+}
+
+.modalTitle {
+  font-weight: 700 !important;
+  font-size: 18px !important;
+}
+
+.modalHeader {
+  padding-bottom: 25px !important;
+}
+
+.gutterX {
+  margin-left: -4px !important;
+  margin-right: -4px !important;
+}
+.gutterCol {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+.fieldsetCus {
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  padding-top: 18px !important;
+  padding-bottom: 24px !important;
 }
