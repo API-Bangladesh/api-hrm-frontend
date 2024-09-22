@@ -26,7 +26,7 @@
 .searchBtn {
   border: 1px solid #ddd !important;
 }
-.filterNav.mantine-active:active {
+.filterNav.api-active:active {
   transform: translateY(0) !important;
 }
 
@@ -63,7 +63,7 @@
   width: 20px;
   height: 20px;
 }
-.mantine-Stepper-stepCompletedIcon {
+.api-Stepper-stepCompletedIcon {
   transform: scale(0.7) !important;
 }
 
