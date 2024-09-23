@@ -37,7 +37,9 @@ const Page = () => {
                   <Accordion.Item eventKey="0" className="pt-0">
                     <Accordion.Header className="p-0 m-0 text-capitalize">
                       <PiBuildings className="sideMenu menu_icon" />
-                      <span className="text-capitalize sideMenu">Company</span>
+                      <span className="text-capitalize sideMenu">
+                        Company Setup
+                      </span>
                     </Accordion.Header>
                     <Accordion.Body>
                       <ul className="text-decoration-none mb-0 sidenav_submenu">

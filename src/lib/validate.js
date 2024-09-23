@@ -23,3 +23,9 @@ export const validateMACAddress = (mac) => {
   const pattern = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
   return pattern.test(mac);
 };
+
+export const validateWebsite = (url) => {
+  const pattern =
+    /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+)\.([a-zA-Z]{2,})([\/\w\.-]*)*\/?$/;
+  return pattern.test(url);
+};
