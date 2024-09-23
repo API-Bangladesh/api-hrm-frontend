@@ -39,6 +39,7 @@ const BasicInfo = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldChange, setShouldChange] = useState(true);
   const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingError, setIsFetchingError] = useState(false);
 
   useEffect(() => {
     if (shouldChange) {
@@ -53,6 +54,7 @@ const BasicInfo = () => {
         } catch (error) {
           setTimeout(() => {
             setIsFetching(false);
+            setIsFetchingError(true);
           }, 500);
           console.error("Failed to fetch basic information:", error);
         }
@@ -130,13 +132,40 @@ const BasicInfo = () => {
   useEffect(() => {
     if (basicInfo) {
       form.setValues({
-        ...basicInfo,
-        establishment_date: new Date(basicInfo.establishment_date),
+        // ...basicInfo,
+        // establishment_date: new Date(basicInfo.establishment_date),
+
+        name: basicInfo.name ?? "",
+        establishment_date: basicInfo.establishment_date
+          ? new Date(basicInfo.establishment_date)
+          : null,
+        business_registration_number:
+          basicInfo.business_registration_number ?? "",
+        tax_id_number: basicInfo.tax_id_number ?? "",
+        bin_no: basicInfo.bin_no ?? "",
+        description: basicInfo.description ?? "",
+        website_url: basicInfo.website_url ?? "",
+        primary_email: basicInfo.primary_email ?? "",
+        primary_phone_number: basicInfo.primary_phone_number ?? "",
+        fax: basicInfo.fax ?? "",
+        logo: basicInfo.logo ?? "",
+        industry_type: basicInfo.industry_type ?? "",
+        // If industry_type is an object, you can do something like this:
+        // industry_type: {
+        //   id: basicInfo.industry_type?.id ?? "",
+        //   name: basicInfo.industry_type?.name ?? "",
+        // },
+        address: {
+          city: basicInfo.address?.city ?? "",
+          state_division: basicInfo.address?.state_division ?? "",
+          post_zip_code: basicInfo.address?.post_zip_code ?? "",
+          country: basicInfo.address?.country ?? "",
+          address: basicInfo.address?.address ?? "",
+        },
       });
     }
   }, [basicInfo]);
 
-  const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
 
@@ -195,8 +224,11 @@ const BasicInfo = () => {
 
       if (response?.status === "success") {
         setTimeout(() => {
+          setBasicInfo((prev) => ({ ...prev, ...response?.data }));
           setIsSubmitting(false);
-          setShouldChange(true);
+          // setShouldChange(true);
+          setIsEditing(false);
+          setPreview(null);
           notifications.show({
             withCloseButton: true,
             autoClose: 5000,
@@ -208,7 +240,6 @@ const BasicInfo = () => {
             // style: { backgroundColor: "red" },
             loading: false,
           });
-          setIsEditing(false);
         }, 500);
       } else {
         setTimeout(() => {
@@ -255,13 +286,11 @@ const BasicInfo = () => {
   };
 
   const handleFileChange = (file) => {
-    setFile(file);
     setPreview(URL.createObjectURL(file));
     form.setFieldValue("logo", file); // add this line
   };
 
   const handleClearLogo = () => {
-    setFile(null);
     setPreview(null);
     form.setFieldValue("logo", null);
     if (fileInputRef.current) {
@@ -269,7 +298,7 @@ const BasicInfo = () => {
     }
   };
 
-  if (isFetching) {
+  if (isFetching || isFetchingError) {
     return (
       <>
         <Breadcrumb
@@ -287,7 +316,8 @@ const BasicInfo = () => {
           className="itemCard d-flex justify-content-center align-items-center"
           style={{ height: "580px" }}
         >
-          Loading...
+          {isFetching && "Loading..."}
+          {isFetchingError && <span className="text-danger"></span>}
         </div>
       </>
     );
