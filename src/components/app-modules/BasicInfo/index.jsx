@@ -26,7 +26,11 @@ import { getData } from "@/lib/fetch";
 import { update, submit } from "@/lib/submit";
 import { fetcher } from "@/lib/fetch";
 import { formatDate, getStoragePath } from "@/lib/helper";
-import { validateEmail, validatePhoneNumber } from "@/lib/validate";
+import {
+  validateEmail,
+  validatePhoneNumber,
+  validateWebsite,
+} from "@/lib/validate";
 import { BsDatabaseExclamation } from "react-icons/bs";
 
 const BasicInfo = () => {
@@ -34,6 +38,8 @@ const BasicInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shouldChange, setShouldChange] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingError, setIsFetchingError] = useState(false);
 
   useEffect(() => {
     if (shouldChange) {
@@ -42,7 +48,14 @@ const BasicInfo = () => {
           const response = await getData(`/api/company/get-basicinformation/`);
           // console.log(response);
           setBasicInfo(response?.data?.data?.result[0]);
+          setTimeout(() => {
+            setIsFetching(false);
+          }, 500);
         } catch (error) {
+          setTimeout(() => {
+            setIsFetching(false);
+            setIsFetchingError(true);
+          }, 500);
           console.error("Failed to fetch basic information:", error);
         }
       };
@@ -79,17 +92,13 @@ const BasicInfo = () => {
       },
     },
     validate: {
-      name: (value) =>
-        value.length < 2 ? "Name must have at least 2 letters" : null,
+      name: (value) => (!value ? "Name is required" : null),
+      primary_email: (value) =>
+        value && !validateEmail(value) ? "Invalid email" : null,
       primary_phone_number: (value) =>
-        validatePhoneNumber(value) ? null : "Invalid phone number",
-      fax: (value) =>
-        value?.length < 8 ? "Fax must be at least 8 digits" : null,
-      primary_email: (value) => (validateEmail(value) ? null : "Invalid email"),
+        value && !validatePhoneNumber(value) ? "Invalid phone number" : null,
       website_url: (value) =>
-        /^(https?|ftp):\/\/[^\s\/$.?#].[^\s]*$/.test(value)
-          ? null
-          : "Must be a valid website URL",
+        value && !validateWebsite(value) ? "Invalid website URL" : null,
     },
   });
 
@@ -123,13 +132,40 @@ const BasicInfo = () => {
   useEffect(() => {
     if (basicInfo) {
       form.setValues({
-        ...basicInfo,
-        establishment_date: new Date(basicInfo.establishment_date),
+        // ...basicInfo,
+        // establishment_date: new Date(basicInfo.establishment_date),
+
+        name: basicInfo.name ?? "",
+        establishment_date: basicInfo.establishment_date
+          ? new Date(basicInfo.establishment_date)
+          : null,
+        business_registration_number:
+          basicInfo.business_registration_number ?? "",
+        tax_id_number: basicInfo.tax_id_number ?? "",
+        bin_no: basicInfo.bin_no ?? "",
+        description: basicInfo.description ?? "",
+        website_url: basicInfo.website_url ?? "",
+        primary_email: basicInfo.primary_email ?? "",
+        primary_phone_number: basicInfo.primary_phone_number ?? "",
+        fax: basicInfo.fax ?? "",
+        logo: basicInfo.logo ?? "",
+        industry_type: basicInfo.industry_type ?? "",
+        // If industry_type is an object, you can do something like this:
+        // industry_type: {
+        //   id: basicInfo.industry_type?.id ?? "",
+        //   name: basicInfo.industry_type?.name ?? "",
+        // },
+        address: {
+          city: basicInfo.address?.city ?? "",
+          state_division: basicInfo.address?.state_division ?? "",
+          post_zip_code: basicInfo.address?.post_zip_code ?? "",
+          country: basicInfo.address?.country ?? "",
+          address: basicInfo.address?.address ?? "",
+        },
       });
     }
   }, [basicInfo]);
 
-  const [file, setFile] = useState(null);
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
 
@@ -188,8 +224,11 @@ const BasicInfo = () => {
 
       if (response?.status === "success") {
         setTimeout(() => {
+          setBasicInfo((prev) => ({ ...prev, ...response?.data }));
           setIsSubmitting(false);
-          setShouldChange(true);
+          // setShouldChange(true);
+          setIsEditing(false);
+          setPreview(null);
           notifications.show({
             withCloseButton: true,
             autoClose: 5000,
@@ -247,19 +286,42 @@ const BasicInfo = () => {
   };
 
   const handleFileChange = (file) => {
-    setFile(file);
     setPreview(URL.createObjectURL(file));
     form.setFieldValue("logo", file); // add this line
   };
 
   const handleClearLogo = () => {
-    setFile(null);
     setPreview(null);
     form.setFieldValue("logo", null);
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset the file input
     }
   };
+
+  if (isFetching || isFetchingError) {
+    return (
+      <>
+        <Breadcrumb
+          classNames={{
+            root: "mb-4",
+          }}
+          title="Basic Info"
+          items={[
+            { title: "Dashboard", href: "/dashboard" },
+            { title: "Basic Info" },
+          ]}
+        />
+
+        <div
+          className="itemCard d-flex justify-content-center align-items-center"
+          style={{ height: "580px" }}
+        >
+          {isFetching && "Loading..."}
+          {isFetchingError && <span className="text-danger"></span>}
+        </div>
+      </>
+    );
+  }
 
   if (!basicInfo && !isEditing) {
     return (
@@ -271,7 +333,7 @@ const BasicInfo = () => {
           title="Basic Info"
           items={[
             { title: "Dashboard", href: "/dashboard" },
-            { title: "Basic Setup" },
+            { title: "Basic Info" },
           ]}
         />
 
@@ -342,7 +404,7 @@ const BasicInfo = () => {
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 3, xl: 3 }}>
               <div className="infoText">
-                <p className="color-light font_14 mb-1">Company Name</p>
+                <p className="color-light font_14 mb-1">Name</p>
                 <p className="font_18">
                   {basicInfo?.name}
                   {/* API Solutions Ltd. */}
@@ -353,7 +415,7 @@ const BasicInfo = () => {
                 <p className="font_18">{basicInfo?.legal_name}</p>
               </div> */}
               <div className="infoText">
-                <p className="color-light font_14 mb-1">Company Type</p>
+                <p className="color-light font_14 mb-1">Industry</p>
                 <p className="font_18">
                   {/* {basicInfo?.industry_type?.name} */}
                   {basicInfo?.industry_type || "N/A"}
@@ -456,10 +518,11 @@ const BasicInfo = () => {
               >
                 <Box>
                   <TextInput
-                    label="Company Name"
+                    label="Name"
                     placeholder="Name"
                     {...form.getInputProps("name")}
                     disabled={isSubmitting}
+                    required
                   />
                   <DateInput
                     mt="sm"
@@ -467,12 +530,13 @@ const BasicInfo = () => {
                     placeholder="Establishment Date"
                     {...form.getInputProps("establishment_date")}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <TextInput
                     mt="sm"
-                    label="Industry Type"
-                    placeholder="Industry Type"
+                    label="Industry"
+                    placeholder="Industry"
                     {...form.getInputProps("industry_type")}
                     disabled={isSubmitting}
                   />
@@ -528,6 +592,7 @@ const BasicInfo = () => {
                     placeholder="Email"
                     {...form.getInputProps("primary_email")}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <TextInput
@@ -536,6 +601,7 @@ const BasicInfo = () => {
                     placeholder="Phone"
                     {...form.getInputProps("primary_phone_number")}
                     disabled={isSubmitting}
+                    required
                   />
                   <TextInput
                     mt="sm"
@@ -553,6 +619,7 @@ const BasicInfo = () => {
                     placeholder="Address"
                     {...form.getInputProps("address.address")}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <TextInput
@@ -564,6 +631,7 @@ const BasicInfo = () => {
                     placeholder="City"
                     {...form.getInputProps("address.city")}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <TextInput
@@ -575,6 +643,7 @@ const BasicInfo = () => {
                     placeholder="Division / State"
                     {...form.getInputProps(`address.state_division`)}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <TextInput
@@ -586,6 +655,7 @@ const BasicInfo = () => {
                     placeholder="Postal / ZIP Code"
                     {...form.getInputProps(`address.post_zip_code`)}
                     disabled={isSubmitting}
+                    required
                   />
 
                   <Select
@@ -599,6 +669,7 @@ const BasicInfo = () => {
                     data={countries}
                     {...form.getInputProps("address.country")}
                     disabled={isSubmitting}
+                    required
                   />
                 </Box>
               </Grid.Col>
