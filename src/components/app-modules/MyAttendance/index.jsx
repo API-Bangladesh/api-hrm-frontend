@@ -32,7 +32,6 @@ import {
 import Add from "./Add";
 import Edit from "./Edit";
 import Delete from "./Delete";
-import MonthlyAttendance from "./MonthlyAttendance";
 
 const PAGE_SIZES = constants.PAGE_SIZES;
 
@@ -683,10 +682,6 @@ const Index = () => {
           // onRowContextMenu={handleContextMenu}
           // onScroll={hideContextMenu}
         />
-      </div>
-
-      <div className="itemCard">
-        <MonthlyAttendance />
       </div>
     </>
   );
