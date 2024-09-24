@@ -27,30 +27,28 @@ const Index = ({ opened, close, item, mutate }) => {
   };
 
   return (
-    <>
-      <Modal
-        classNames={{
-          title: "modalTitle",
-        }}
-        opened={opened}
-        title="Delete"
-        onClose={close}
-        centered
-      >
-        <form>
-          <p>Are you sure want to delete ?</p>
+    <Modal
+      classNames={{
+        title: "modalTitle",
+      }}
+      opened={opened}
+      title="Delete"
+      onClose={close}
+      centered
+    >
+      <form>
+        <p>Are you sure want to delete ?</p>
 
-          <Group justify="flex-end" mt="md">
-            <Button onClick={close} variant="filled">
-              No
-            </Button>
-            <Button variant="filled" color="red" onClick={handleDelete}>
-              Yes
-            </Button>
-          </Group>
-        </form>
-      </Modal>
-    </>
+        <Group justify="flex-end" mt="md">
+          <Button onClick={close} variant="filled">
+            No
+          </Button>
+          <Button variant="filled" color="red" onClick={handleDelete}>
+            Yes
+          </Button>
+        </Group>
+      </form>
+    </Modal>
   );
 };
 
