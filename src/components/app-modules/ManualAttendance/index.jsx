@@ -30,6 +30,7 @@ import {
   getFullName,
   convertTimeTo12HourFormat,
   getStatusProps,
+  getStoragePath,
 } from "@/lib/helper";
 import Add from "./Add";
 import Edit from "./Edit";
@@ -47,7 +48,7 @@ const Index = () => {
     direction: "asc", // desc
   });
 
-  let apiUrl = `/api/attendance/get-manual-attendence/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  let apiUrl = `/api/attendance/get-manual-attendance/?requested_by=all&page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
 
@@ -118,27 +119,31 @@ const Index = () => {
       title: "Employee",
       sortable: false,
       width: 170,
-      render: ({ id, photo, first_name, last_name, official_id }) => (
-        <div className="d-flex justify-content-start align-items-center">
-          {photo ? (
+      render: ({
+        requested_by: { id, photo, first_name, last_name, official_id },
+      }) => (
+        <Link
+          href={`/profile/${id}`}
+          className="d-flex justify-content-start align-items-center text-decoration-none color-inherit"
+        >
+          <span className="table_user_img">
             <img
-              src={getStoragePath(photo)}
-              alt="img"
-              className="table_user_img"
+              src={photo ? getStoragePath(photo) : "/default-profile.png"}
+              alt=""
+              onError={(e) => {
+                e.target.src = "/default-profile.png";
+              }}
             />
-          ) : (
-            ""
-          )}
-          <div className="d-flex flex-column ms-2">
-            <Link
-              href={`/profile/${id}`}
-              className="text-decoration-none color-inherit"
-            >
+          </span>
+          <div className="d-flex flex-column justify-content-center ms-2 table_user">
+            <h6 className="table_user_name">
               {getFullName(first_name, last_name)}
-            </Link>
-            {official_id && <span>{official_id}</span>}
+            </h6>
+            {official_id && (
+              <span className="table_user_id">{official_id}</span>
+            )}
           </div>
-        </div>
+        </Link>
       ),
     },
     {
@@ -152,7 +157,7 @@ const Index = () => {
       key: "in_time",
       accessor: "in_time",
       title: "In Time",
-      sortable: true,
+      // sortable: true,
       noWrap: true,
       render: ({ in_time }) =>
         in_time ? convertTimeTo12HourFormat(in_time) : "N/A",
@@ -163,7 +168,7 @@ const Index = () => {
       key: "out_time",
       accessor: "out_time",
       title: "Out Time",
-      sortable: true,
+      // sortable: true,
       render: ({ out_time }) =>
         out_time ? convertTimeTo12HourFormat(out_time) : "N/A",
       modifier: ({ out_time }) =>
@@ -174,14 +179,18 @@ const Index = () => {
       accessor: "shift",
       title: "Shift",
       sortable: true,
-      render: ({ shift }) => shift?.name || "N/A",
+      render: ({
+        requested_by: {
+          shift: { name },
+        },
+      }) => name || "N/A",
     },
     {
-      key: "admin_note",
-      accessor: "admin_note",
-      title: "Admin Note",
-      sortable: true,
-      render: ({ admin_note }) => admin_note || "N/A",
+      key: "reason",
+      accessor: "reason",
+      title: "Reason",
+      // sortable: true,
+      render: ({ reason }) => reason || "N/A",
     },
     {
       key: "status",
@@ -306,8 +315,8 @@ const Index = () => {
       value: "shift",
     },
     {
-      label: "Admin Note",
-      value: "admin_note",
+      label: "Reason",
+      value: "reason",
     },
     {
       label: "Status",
@@ -326,7 +335,7 @@ const Index = () => {
     "in_time",
     "out_time",
     "shift",
-    "admin_note",
+    "reason",
     "status",
     "actions",
   ]);
@@ -351,7 +360,7 @@ const Index = () => {
   // const [dataToExport, setDataToExport] = useState(null);
 
   const getExportDataUrl = () => {
-    let url = `/api/attendance/get-manual-attendence/?column_accessor=${
+    let url = `/api/attendance/get-manual-attendance/?column_accessor=${
       sortStatus?.direction === "desc" ? "-" : ""
     }${sortStatus.columnAccessor}`;
 

@@ -1,42 +1,80 @@
-import { useRef } from "react";
-import { DateInput, TimeInput } from "@mantine/dates";
-import {
-  Modal,
-  TextInput,
-  Textarea,
-  Button,
-  Select,
-  Group,
-  Grid,
-  NumberInput,
-  ActionIcon,
-} from "@mantine/core";
-import { FiFile } from "react-icons/fi";
-import { IoTimeOutline } from "react-icons/io5";
+import React, { useState } from "react";
+import { useForm } from "@mantine/form";
+import { DateInput, DateTimePicker } from "@mantine/dates";
+import { Modal, Textarea, Button, Select, Group } from "@mantine/core";
+import { toast } from "react-toastify";
+import { submit } from "@/lib/submit";
+import { formatDateToYYYYMMDD, formatTimeFromDateTime } from "@/lib/helper";
 
-const Index = ({ opened, close }) => {
-  // Time picker
-  const refInTime = useRef(null);
-  const inTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refInTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
-  const refOutTime = useRef(null);
-  const outTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refOutTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
-  // Time picker
+const Index = ({ opened, close, mutate }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      // requested_by: "",
+      date: null,
+      in_time: null,
+      out_time: null,
+      reason: "",
+    },
+    validate: {
+      // requested_by: (value) => (!value ? "Employee is required" : null),
+      date: (value) => (!value ? "Date is required" : null),
+      in_time: (value, values) =>
+        !value && !values.out_time ? "In time is required" : null,
+      out_time: (value, values) =>
+        !value && !values.in_time ? "Out time is required" : null,
+    },
+  });
+
+  const handleSubmit = async (values) => {
+    setIsSubmitting(true);
+
+    try {
+      const formattedDate = formatDateToYYYYMMDD(values.date);
+      const formattedInTime = formatTimeFromDateTime(values.in_time);
+      const formattedOutTime = formatTimeFromDateTime(values.out_time);
+
+      const formattedValues = {
+        ...values,
+        date: formattedDate,
+        in_time: formattedInTime,
+        out_time: formattedOutTime,
+      };
+
+      const response = await submit(
+        `/api/attendance/add-manual-attendance/`,
+        formattedValues
+      );
+
+      if (response?.status === "success") {
+        setIsSubmitting(false);
+        form.reset();
+        close();
+        mutate();
+        toast.success("Attendance created successfully");
+      } else {
+        setIsSubmitting(false);
+        if (response?.status === "error" && Array.isArray(response.message)) {
+          response.message.forEach((msg) => {
+            toast.error(msg);
+          });
+        } else {
+          toast.error("Error submitting form");
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 500);
+    }
+  };
+
+  const handleError = (errors) => {
+    console.log(errors);
+  };
 
   return (
     <>
@@ -49,40 +87,66 @@ const Index = ({ opened, close }) => {
         onClose={close}
         centered
       >
-        <form>
-          {/* <Select
-            mb="sm"
-            label="Employee"
-            placeholder="Employee"
-            data={["Jiaur Rahman", "Nazmul Hussain"]}
-          /> */}
+        <form
+          onSubmit={form.onSubmit(
+            (values) => handleSubmit(values),
+            handleError
+          )}
+        >
           <DateInput
             mb="sm"
             valueFormat="DD MMM YYYY"
             label="Date"
             placeholder="DD MMM YYYY"
+            required
+            disabled={isSubmitting}
+            {...form.getInputProps("date")}
+            key={form.key("date")}
           />
-          <TimeInput
+          <DateTimePicker
             mb="sm"
             label="In Time"
-            ref={refInTime}
-            rightSection={inTime}
+            placeholder="Pick in time"
+            valueFormat="DD MMM YYYY hh:mm A"
+            clearable
+            // ref={refInTime}
+            // rightSection={inTime}
+            // withSeconds
+            required
+            disabled={isSubmitting}
+            {...form.getInputProps("in_time")}
+            key={form.key("in_time")}
           />
-          <TimeInput
+          <DateTimePicker
             mb="sm"
             label="Out Time"
-            ref={refOutTime}
-            rightSection={outTime}
+            placeholder="Pick out time"
+            valueFormat="DD MMM YYYY hh:mm A"
+            clearable
+            // ref={refOutTime}
+            // rightSection={outTime}
+            // withSeconds
+            required
+            disabled={isSubmitting}
+            {...form.getInputProps("out_time")}
+            key={form.key("out_time")}
           />
-          <Select
+          <Textarea
             mb="sm"
-            label="Shift"
-            placeholder="Shift"
-            data={["Day", "Night"]}
+            label="Reason"
+            placeholder="Reason"
+            disabled={isSubmitting}
+            {...form.getInputProps("reason")}
           />
-          <Textarea mb="sm" label="Admin Note" placeholder="Admin Note" />
-          <Group justify="flex-end">
-            <Button type="submit">Save</Button>
+
+          <Group justify="flex-end" mt="sm">
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              loaderProps={{ type: "dots" }}
+            >
+              Save
+            </Button>
           </Group>
         </form>
       </Modal>
