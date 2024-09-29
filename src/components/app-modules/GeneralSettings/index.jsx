@@ -353,7 +353,7 @@ const GeneralSettings = () => {
 
           <Group>
             <Button
-              mt="sm"
+              mt="lg"
               type="submit"
               loading={isSubmitting}
               loaderProps={{ type: "dots" }}

@@ -107,6 +107,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Edit Holiday"
@@ -115,6 +116,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           close();
         }}
         centered
+        size="md"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Grid>
@@ -164,7 +167,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
               />
             </Grid.Col>
           </Grid>
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

@@ -52,11 +52,14 @@ const Index = ({ opened, close, mutate }) => {
     <Modal
       classNames={{
         title: "modalTitle",
+        header: "modalHeader",
       }}
       opened={opened}
       title="Add Group"
       onClose={close}
       centered
+      size="md"
+      padding="40px"
     >
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Grid>
@@ -79,7 +82,7 @@ const Index = ({ opened, close, mutate }) => {
           </Grid.Col>
         </Grid>
 
-        <Group justify="flex-end" mt="sm">
+        <Group justify="flex-end" mt="md">
           <Button
             type="submit"
             loading={isSubmitting}

@@ -221,11 +221,14 @@ const Index = ({ opened, close, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Leave Request"
         onClose={close}
         centered
+        size="md"
+        padding="40px"
       >
         <form
           onSubmit={form.onSubmit(
@@ -307,14 +310,14 @@ const Index = ({ opened, close, mutate }) => {
             {...form.getInputProps("attachment")}
             key={form.key("attachment")}
           />
-          <Textarea
+          <TextInput
             mb="sm"
             label="Details"
             placeholder="Details"
             disabled={isSubmitting}
             {...form.getInputProps("reason")}
           />
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

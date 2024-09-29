@@ -68,11 +68,14 @@ const Index = ({ opened, close, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Add Leave Policy"
         onClose={close}
         centered
+        size="md"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
@@ -82,7 +85,7 @@ const Index = ({ opened, close, mutate }) => {
             disabled={isSubmitting}
             {...form.getInputProps("name")}
           />
-          <Textarea
+          <TextInput
             mt="md"
             label="Description"
             placeholder="Description"
@@ -138,7 +141,7 @@ const Index = ({ opened, close, mutate }) => {
             {...form.getInputProps("require_attachment", { type: "checkbox" })}
           />
 
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

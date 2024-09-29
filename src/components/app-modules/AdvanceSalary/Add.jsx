@@ -19,11 +19,14 @@ const Index = ({ opened, close }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Create Advance Salary"
         onClose={close}
         centered
+        size="md"
+        padding="40px"
       >
         <form>
           <TextInput mb="sm" label="Title" placeholder="Title" />
@@ -54,7 +57,7 @@ const Index = ({ opened, close }) => {
             rightSectionWidth={0}
             placeholder="Total Installment"
           />
-          <Group justify="flex-end">
+          <Group justify="flex-end" mt="xl">
             <Button type="submit">Save</Button>
           </Group>
         </form>

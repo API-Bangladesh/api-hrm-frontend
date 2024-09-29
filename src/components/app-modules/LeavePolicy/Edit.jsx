@@ -87,6 +87,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Edit Leave Policy"
@@ -95,6 +96,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           close();
         }}
         centered
+        size="md"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
@@ -137,7 +140,6 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             disabled={isSubmitting}
             {...form.getInputProps("leave_type")}
           />
-
           <Checkbox
             mt="md"
             label="Is Optional?"
@@ -160,7 +162,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             {...form.getInputProps("require_attachment", { type: "checkbox" })}
           />
 
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

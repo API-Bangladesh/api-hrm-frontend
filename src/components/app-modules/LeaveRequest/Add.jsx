@@ -5,7 +5,7 @@ import { DateInput } from "@mantine/dates";
 import {
   Modal,
   TextInput,
-  Textarea,
+  Grid,
   Button,
   Select,
   Group,
@@ -215,11 +215,14 @@ const Index = ({ opened, close, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Leave Request"
         onClose={close}
         centered
+        size="xl"
+        padding="40px"
       >
         <form
           onSubmit={form.onSubmit(
@@ -227,103 +230,116 @@ const Index = ({ opened, close, mutate }) => {
             handleError
           )}
         >
-          <Select
-            mb="sm"
-            label="Employee"
-            placeholder="Employee"
-            required={true}
-            disabled={isSubmitting}
-            data={users}
-            searchable
-            // limit={10}
-            nothingFoundMessage="Nothing found..."
-            {...form.getInputProps("user")}
-            key={form.key("user")}
-            renderOption={UserSelectItem}
-          />
-          <Select
-            label="Request Type"
-            mb="sm"
-            placeholder="Pick value"
-            required={true}
-            disabled={isSubmitting}
-            data={["Regular Leave", "Extend Existing", "New Allocation"]}
-            {...form.getInputProps("request_type")}
-            key={form.key("request_type")}
-          />
-          <Select
-            mb="sm"
-            label="Leave Type"
-            placeholder="Leave Type"
-            required={true}
-            disabled={isSubmitting}
-            data={leavePolicies}
-            searchable
-            // limit={10}
-            nothingFoundMessage="Nothing found..."
-            {...form.getInputProps("leavepolicy")}
-            key={form.key("leavepolicy")}
-          />
-          {isExtendExisting && (
-            <Select
-              label="Exchange With (Optional)"
-              mb="sm"
-              placeholder="Pick value"
-              // required
-              disabled={isSubmitting}
-              data={leavePolicies}
-              {...form.getInputProps("exchange_with")}
-              key={form.key("exchange_with")}
-            />
-          )}
+          <Grid classNames={{ root: "gutterX", col: "gutterCol" }}>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <Select
+                label="Employee"
+                placeholder="Employee"
+                required={true}
+                disabled={isSubmitting}
+                data={users}
+                searchable
+                // limit={10}
+                nothingFoundMessage="Nothing found..."
+                {...form.getInputProps("user")}
+                key={form.key("user")}
+                renderOption={UserSelectItem}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <Select
+                label="Request Type"
+                placeholder="Pick value"
+                required={true}
+                disabled={isSubmitting}
+                data={["Regular Leave", "Extend Existing", "New Allocation"]}
+                {...form.getInputProps("request_type")}
+                key={form.key("request_type")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <Select
+                label="Leave Type"
+                placeholder="Leave Type"
+                required={true}
+                disabled={isSubmitting}
+                data={leavePolicies}
+                searchable
+                // limit={10}
+                nothingFoundMessage="Nothing found..."
+                {...form.getInputProps("leavepolicy")}
+                key={form.key("leavepolicy")}
+              />
+            </Grid.Col>
 
-          <DateInput
-            mb="sm"
-            valueFormat="DD MMM YYYY"
-            label="From Date"
-            placeholder="DD MMM YYYY"
-            required
-            disabled={isSubmitting}
-            {...form.getInputProps("from_date")}
-            key={form.key("from_date")}
-          />
-          <DateInput
-            mb="sm"
-            valueFormat="DD MMM YYYY"
-            label="To Date"
-            placeholder="DD MMM YYYY"
-            required
-            disabled={isSubmitting}
-            {...form.getInputProps("to_date")}
-            key={form.key("to_date")}
-          />
-          <TextInput
-            disabled
-            mb="sm"
-            label="Total Days"
-            placeholder="0"
-            value={totalLeave}
-            // {...form.getInputProps("total_leave")}
-          />
-          <FileInput
-            mb="sm"
-            leftSection={<FiFile />}
-            label="Attachment"
-            placeholder="Attachment"
-            required
-            disabled={isSubmitting}
-            leftSectionPointerEvents="none"
-            {...form.getInputProps("attachment")}
-            key={form.key("attachment")}
-          />
-          <Textarea
-            mb="sm"
-            label="Details"
-            placeholder="Details"
-            disabled={isSubmitting}
-            {...form.getInputProps("reason")}
-          />
-          <Group justify="flex-end" mt="sm">
+            {isExtendExisting && (
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <Select
+                  label="Exchange With (Optional)"
+                  placeholder="Pick value"
+                  // required
+                  disabled={isSubmitting}
+                  data={leavePolicies}
+                  {...form.getInputProps("exchange_with")}
+                  key={form.key("exchange_with")}
+                />
+              </Grid.Col>
+            )}
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <DateInput
+                valueFormat="DD MMM YYYY"
+                label="From Date"
+                placeholder="DD MMM YYYY"
+                required
+                disabled={isSubmitting}
+                {...form.getInputProps("from_date")}
+                key={form.key("from_date")}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                disabled
+                label="Total Days"
+                placeholder="0"
+                value={totalLeave}
+                // {...form.getInputProps("total_leave")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <DateInput
+                valueFormat="DD MMM YYYY"
+                label="To Date"
+                placeholder="DD MMM YYYY"
+                required
+                disabled={isSubmitting}
+                {...form.getInputProps("to_date")}
+                key={form.key("to_date")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <FileInput
+                leftSection={<FiFile />}
+                label="Attachment"
+                placeholder="Attachment"
+                required
+                disabled={isSubmitting}
+                leftSectionPointerEvents="none"
+                {...form.getInputProps("attachment")}
+                key={form.key("attachment")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                label="Details"
+                placeholder="Details"
+                disabled={isSubmitting}
+                {...form.getInputProps("reason")}
+              />
+            </Grid.Col>
+          </Grid>
+
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

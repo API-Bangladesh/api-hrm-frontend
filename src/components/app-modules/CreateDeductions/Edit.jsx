@@ -85,6 +85,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Edit Deductions"
@@ -93,6 +94,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           close();
         }}
         centered
+        size="md"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <TextInput
@@ -149,7 +152,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             disabled={isSubmitting}
             {...form.getInputProps("is_recurring", { type: "checkbox" })}
           />
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}
