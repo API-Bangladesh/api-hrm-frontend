@@ -271,7 +271,18 @@ const index = () => {
 
   return (
     <>
-      <Modal opened={opened} onClose={close} title="Earnings" centered>
+      <Modal
+        classNames={{
+          title: "modalTitle",
+          header: "modalHeader",
+        }}
+        opened={opened}
+        onClose={close}
+        title="Earnings"
+        centered
+        size="md"
+        padding="40px"
+      >
         <form action="">
           <TextInput
             mb="sm"
@@ -289,7 +300,7 @@ const index = () => {
             // disabled={isSubmitting}
             // {...form.getInputProps("name")}
           />
-          <Group justify="flex-end" mt="md">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               // loading={isSubmitting}

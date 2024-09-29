@@ -20,27 +20,32 @@ const Index = ({ opened, close }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Create Salary Slip"
         onClose={close}
         centered
+        size="xl"
+        padding="40px"
       >
         <form>
-          <Grid>
+          <Grid classNames={{ root: "gutterX", col: "gutterCol" }}>
             <Grid.Col span={{ base: 12, lg: 6 }}>
               <DateInput
-                mb="sm"
                 valueFormat="DD MMM YYYY"
                 label="Posting Date"
                 placeholder="DD MMM YYYY"
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <Select
-                mb="sm"
                 label="Select Payroll"
                 placeholder="Pick value"
                 data={["payroll_id-A", "payroll_id-B"]}
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <Select
                 label="Employee"
                 placeholder="Pick value"
@@ -49,25 +54,27 @@ const Index = ({ opened, close }) => {
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
               <DateInput
-                mb="sm"
                 valueFormat="DD MMM YYYY"
                 label="From Date"
                 placeholder="DD MMM YYYY"
               />
-              <DateInput
-                mb="sm"
-                valueFormat="DD MMM YYYY"
-                label="To Date"
-                placeholder="DD MMM YYYY"
-              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <Select
                 label="Effective Bank"
                 placeholder="Pick value"
                 data={["Bank-A", "Bank-B"]}
               />
             </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <DateInput
+                valueFormat="DD MMM YYYY"
+                label="To Date"
+                placeholder="DD MMM YYYY"
+              />
+            </Grid.Col>
           </Grid>
-          <Group mt="sm" justify="flex-end">
+          <Group mt="xl" justify="flex-end">
             <Button type="submit">Save</Button>
           </Group>
         </form>

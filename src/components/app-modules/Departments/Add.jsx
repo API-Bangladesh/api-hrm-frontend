@@ -9,6 +9,7 @@ import {
   Select,
   Group,
   Grid,
+  Fieldset,
 } from "@mantine/core";
 import { toast } from "react-toastify";
 import { submit } from "@/lib/submit";
@@ -141,33 +142,36 @@ const Index = ({ opened, close, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Add Department"
         onClose={close}
         centered
+        size="xl"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
-          <Grid>
-            <Grid.Col span={6}>
+          <Grid classNames={{ root: "gutterX", col: "gutterCol" }}>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
-                mb="sm"
                 label="Name"
                 placeholder="Name"
                 required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("name")}
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
-                mb="sm"
                 label="Description"
                 placeholder="Description"
                 disabled={isSubmitting}
                 {...form.getInputProps("description")}
               />
-
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <Select
-                mb="sm"
                 label="Company"
                 placeholder="Company"
                 required={true}
@@ -176,8 +180,9 @@ const Index = ({ opened, close, mutate }) => {
                 {...form.getInputProps("company")}
                 key={form.key("company")}
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <Select
-                mb="sm"
                 label="Branch"
                 placeholder="Branch"
                 required={true}
@@ -186,16 +191,18 @@ const Index = ({ opened, close, mutate }) => {
                 {...form.getInputProps("branch")}
                 key={form.key("branch")}
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
-                mb="sm"
                 label="Email"
                 placeholder="Email"
                 required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("email")}
               />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
-                // mb="sm"
                 label="Phone"
                 placeholder="Phone"
                 required={true}
@@ -203,55 +210,64 @@ const Index = ({ opened, close, mutate }) => {
                 {...form.getInputProps("phone")}
               />
             </Grid.Col>
-            <Grid.Col span={6}>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
-                mb="sm"
                 label="Fax"
                 placeholder="Fax"
                 required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("fax")}
               />
-              <TextInput
-                mb="sm"
-                label="Address"
-                placeholder="Address"
-                disabled={isSubmitting}
-                {...form.getInputProps("address.address")}
-              />
-              <TextInput
-                mb="sm"
-                label="City"
-                placeholder="City"
-                disabled={isSubmitting}
-                {...form.getInputProps("address.city")}
-              />
-              <TextInput
-                mb="sm"
-                label="Division / State"
-                placeholder="Division / State"
-                disabled={isSubmitting}
-                {...form.getInputProps("address.state_division")}
-              />
-              <TextInput
-                mb="sm"
-                label="Postal / ZIP Code"
-                placeholder="Postal / ZIP Code"
-                disabled={isSubmitting}
-                {...form.getInputProps("address.post_zip_code")}
-              />
-              <Select
-                // mb="sm"
-                label="Country"
-                placeholder="Country"
-                disabled={isSubmitting}
-                searchable
-                data={countries}
-                {...form.getInputProps("address.country")}
-              />
             </Grid.Col>
           </Grid>
-          <Group justify="flex-end" mt="md">
+
+          <Fieldset mt={"xl"} className="fieldsetCus">
+            <Grid classNames={{ root: "gutterX", col: "gutterCol" }}>
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <TextInput
+                  label="Address"
+                  placeholder="Address"
+                  disabled={isSubmitting}
+                  {...form.getInputProps("address.address")}
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <TextInput
+                  label="City"
+                  placeholder="City"
+                  disabled={isSubmitting}
+                  {...form.getInputProps("address.city")}
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <TextInput
+                  label="Division / State"
+                  placeholder="Division / State"
+                  disabled={isSubmitting}
+                  {...form.getInputProps("address.state_division")}
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <TextInput
+                  label="Postal / ZIP Code"
+                  placeholder="Postal / ZIP Code"
+                  disabled={isSubmitting}
+                  {...form.getInputProps("address.post_zip_code")}
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, lg: 6 }}>
+                <Select
+                  label="Country"
+                  placeholder="Country"
+                  disabled={isSubmitting}
+                  searchable
+                  data={countries}
+                  {...form.getInputProps("address.country")}
+                />
+              </Grid.Col>
+            </Grid>
+          </Fieldset>
+          <Group mt="xl" justify="flex-end">
             <Button
               type="submit"
               loading={isSubmitting}

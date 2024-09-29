@@ -68,6 +68,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Edit Employee Group"
@@ -76,6 +77,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           close();
         }}
         centered
+        size="md"
+        padding="40px"
       >
         <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
           <Grid>
