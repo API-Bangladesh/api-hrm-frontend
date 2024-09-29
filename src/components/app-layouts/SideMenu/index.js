@@ -432,7 +432,7 @@ const Page = () => {
                           href="/raw-data"
                           className="text-decoration-none subMenu"
                         >
-                          Raw Data
+                          Log Data
                         </Link>
                       </li>
                       <li className="text-capitalize text-decoration-none sidenav_sub_item">

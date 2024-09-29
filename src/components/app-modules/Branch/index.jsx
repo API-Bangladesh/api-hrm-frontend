@@ -15,6 +15,7 @@ import { BiMessageSquareEdit } from "react-icons/bi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { fetcher, getData } from "@/lib/fetch";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
+import { generateAddressString } from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import { constants } from "@/lib/config";
 import AddButton from "@/components/utils/AddButton";
@@ -157,25 +158,24 @@ const Index = () => {
     },
     {
       // for table display
+      accessor: "fax",
+      title: "Fax",
+      // visibleMediaQuery: aboveXs,
+      // titleClassName: "dt_cell_md",
+      width: 170,
+      render: ({ fax }) => fax || "N/A",
+      // for export
+      key: "fax",
+    },
+    {
+      // for table display
       accessor: "address",
       title: "Address",
       // cellsClassName: "dt_cell_lg",
       width: 300,
       // visibleMediaQuery: aboveXs,
-      render: ({ address }) =>
-        `${address?.address ? address.address : ""}${
-          address?.city ? ", " + address.city : ""
-        }${address?.state_division ? ", " + address.state_division : ""}${
-          address?.post_zip_code ? " - " + address.post_zip_code : ""
-        }${address?.country ? ", " + address.country : ""}` || "N/A",
-
-      modifier: ({ address }) =>
-        `${address?.address ? address.address : ""}${
-          address?.city ? ", " + address.city : ""
-        }${address?.state_division ? ", " + address.state_division : ""}${
-          address?.post_zip_code ? " - " + address.post_zip_code : ""
-        }${address?.country ? ", " + address.country : ""}` || "N/A",
-
+      render: ({ address }) => generateAddressString(address || {}),
+      modifier: ({ address }) => generateAddressString(address || {}),
       // for export
       key: "address",
     },
@@ -257,6 +257,10 @@ const Index = () => {
       value: "email",
     },
     {
+      label: "Fax",
+      value: "fax",
+    },
+    {
       label: "Address",
       value: "address",
     },
@@ -275,6 +279,7 @@ const Index = () => {
     "name",
     "description",
     "email",
+    "fax",
     "phone",
     "company",
     "address",

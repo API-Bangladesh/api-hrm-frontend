@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { update } from "@/lib/submit";
 import { fetcher } from "@/lib/fetch";
 import { countries } from "@/data/countries";
+import { validateEmail, validatePhoneNumber } from "@/lib/validate";
 
 const Index = ({ opened, close, item, setItem, mutate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,21 +39,15 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       },
     },
     validate: {
-      name: (value) =>
-        value.length < 5 ? "Name must have at least 5 letters" : null,
+      name: (value) => (!value ? "Name is required" : null),
       // description: (value) =>
       //   value.length < 10
       //     ? "Description must have at least 10 characters"
       //     : null,
       company: (value) => (!value ? "Select a company" : null),
-      phone: (value) => {
-        const phonePattern = /^01[0-9]{9}$/;
-        return !phonePattern.test(value) ? "Phone number is invalid" : null;
-      },
-      email: (value) => {
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return !emailPattern.test(value) ? "Email is invalid" : null;
-      },
+      phone: (value) =>
+        validatePhoneNumber(value) ? null : "Invalid phone number",
+      email: (value) => (validateEmail(value) ? null : "Invalid email"),
       // fax: (value) => {
       //   const faxPattern = /^[0-9]+$/;
       //   return !faxPattern.test(value) ? "Fax number is invalid" : null;

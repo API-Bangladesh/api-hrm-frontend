@@ -38,8 +38,7 @@ const Index = ({ opened, close, mutate }) => {
       },
     },
     validate: {
-      name: (value) =>
-        value.length < 5 ? "Name must have at least 5 letters" : null,
+      name: (value) => (!value ? "Name is required" : null),
       // description: (value) =>
       //   value.length < 10
       //     ? "Description must have at least 10 characters"

@@ -7,7 +7,7 @@ const Index = ({ opened, close, item, mutate }) => {
   const handleUpdate = async () => {
     try {
       const response = await update(
-        `/api/attendance/approve-manual-attendence/${item.id}`
+        `/api/attendance/approve-manual-attendance/${item.id}`
       );
 
       if (response?.status === "success") {
@@ -29,7 +29,7 @@ const Index = ({ opened, close, item, mutate }) => {
         title: "modalTitle",
       }}
       opened={opened}
-      title="Delete"
+      title="Approve"
       onClose={close}
       centered
     >

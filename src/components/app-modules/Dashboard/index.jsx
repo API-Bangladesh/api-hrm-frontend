@@ -15,6 +15,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { CgFileDocument } from "react-icons/cg";
 import { FcDocument } from "react-icons/fc";
+import MonthlyAttendance from "./MonthlyAttendance";
+
 const arrowIcon = <HiArrowLongRight />;
 
 const leaveData = [
@@ -470,6 +472,12 @@ const index = () => {
                 <Table.Tbody>{pendingAttendanceRequests}</Table.Tbody>
               </Table>
             </div>
+          </div>
+        </Grid.Col>
+
+        <Grid.Col span={12}>
+          <div className="itemCard">
+            <MonthlyAttendance />
           </div>
         </Grid.Col>
       </Grid>

@@ -21,13 +21,17 @@ import {
   getFullName,
   getDate,
   convertTimeTo12HourFormat,
+  generateStringFromArray,
 } from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
-import FilterModal from "./FilterModal";
+import FilterModal from "./Filter";
 
 const PAGE_SIZES = constants.PAGE_SIZES;
 
 const Index = () => {
+  const [filterOpened, { open: filterOpen, close: filterClose }] =
+    useDisclosure(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [sortStatus, setSortStatus] = useState({
@@ -35,9 +39,27 @@ const Index = () => {
     direction: "asc", // desc
   });
 
-  let apiUrl = `/api/attendance/get-attendance/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  const [filterData, setFilterData] = useState(null);
+
+  let apiUrl = `/api/attendance/get-attendance/?employee=all&page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
+
+  if (filterData) {
+    Object.keys(filterData).forEach((key) => {
+      const value = filterData[key];
+
+      if (Array.isArray(value)) {
+        if (value[0] !== null && value[1] !== null) {
+          apiUrl += `&${key}_from=${encodeURIComponent(
+            value[0]
+          )}&${key}_to=${encodeURIComponent(value[1])}`;
+        }
+      } else if (value) {
+        apiUrl += `&${key}=${encodeURIComponent(value)}`;
+      }
+    });
+  }
 
   const {
     data: apiData,
@@ -152,11 +174,23 @@ const Index = () => {
         out_time ? convertTimeTo12HourFormat(out_time) : "",
     },
     {
+      key: "shift",
+      accessor: "shift",
+      title: "Shift",
+      width: 120,
+      render: ({ shift: { name } }) => (name ? name : ""),
+    },
+    {
       key: "status",
       accessor: "status",
       title: "Status",
       width: 120,
-      render: ({ status }) => status || "",
+      render: ({ attendance_status }) =>
+        attendance_status?.length
+          ? generateStringFromArray(
+              attendance_status.map((item) => item?.status).filter(Boolean)
+            )
+          : "",
     },
     {
       key: "attendance_mode",
@@ -170,21 +204,32 @@ const Index = () => {
       accessor: "late_time",
       title: "Late Time (Mins)",
       width: 140,
-      render: ({ late_time }) => Number(late_time).toFixed(0) || "",
+      render: ({ late_time }) =>
+        late_time ? Number(late_time).toFixed(0) : "",
     },
     {
       key: "early_leave",
       accessor: "early_leave",
       title: "Early Leave (Mins)",
       width: 140,
-      render: ({ early_leave }) => Number(early_leave).toFixed(0) || "",
+      render: ({ early_leave }) =>
+        early_leave ? Number(early_leave).toFixed(0) : "",
     },
     {
       key: "overtime",
       accessor: "overtime",
       title: "Overtime (Mins)",
       width: 140,
-      render: ({ over_time }) => Number(over_time).toFixed(0) || "",
+      render: ({ over_time }) =>
+        over_time ? Number(over_time).toFixed(0) : "",
+    },
+    {
+      key: "working_hours",
+      accessor: "working_hours",
+      title: "Working Hours",
+      width: 140,
+      render: ({ working_minutes }) =>
+        working_minutes ? Number(working_minutes).toFixed(0) : "",
     },
   ];
 
@@ -218,6 +263,10 @@ const Index = () => {
       value: "out_time",
     },
     {
+      label: "Shift",
+      value: "shift",
+    },
+    {
       label: "Status",
       value: "status",
     },
@@ -235,7 +284,11 @@ const Index = () => {
     },
     {
       label: "Overtime (Mins)",
-      value: "over_time",
+      value: "overtime",
+    },
+    {
+      label: "Working Hours (Mins)",
+      value: "working_hours",
     },
   ];
 
@@ -243,6 +296,7 @@ const Index = () => {
     // "na",
     "employee",
     "department",
+    "designation",
     "date",
     "in_time",
     "out_time",
@@ -492,20 +546,15 @@ const Index = () => {
     }
   };
 
-  const [open1, setOpen1] = useState(false);
-  const [item1, setItem1] = useState("Designation");
-
-  const [item2, setItem2] = useState("Group");
-  const [item3, setItem3] = useState("Department");
-  const [item4, setItem4] = useState("Shift");
-  const icon = <CiSearch />;
-
-  const [filterOpened, { open: filterOpen, close: filterClose }] =
-    useDisclosure(false);
-
   return (
     <>
-      <FilterModal opened={filterOpened} close={filterClose} />
+      <FilterModal
+        opened={filterOpened}
+        close={filterClose}
+        data={filterData}
+        setData={setFilterData}
+      />
+
       <div className="mb-4">
         <Breadcrumb
           title="Attendance Report"

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Breadcrumbs, Anchor, Stepper } from "@mantine/core";
 import { toast } from "react-toastify";
 import PersonalDetails from "./steps/PersonalDetails";
@@ -152,6 +153,8 @@ const AddEmployee = () => {
   const [isCreated, setIsCreated] = useState(false);
   const [branches, setBranches] = useState([]);
   const [departments, setDepartments] = useState([]);
+
+  const router = useRouter();
 
   const items = [
     { title: "Employees", href: "/" },
@@ -354,6 +357,9 @@ const AddEmployee = () => {
         setFormData(initialData);
         toast.success("Employee created successfully");
         // setActive(6)
+        setTimeout(() => {
+          router.push("/employees");
+        }, 500);
       } else {
         setIsSubmitting(false);
         // toast.error(

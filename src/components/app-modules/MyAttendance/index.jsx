@@ -32,7 +32,6 @@ import {
 import Add from "./Add";
 import Edit from "./Edit";
 import Delete from "./Delete";
-import MonthlyAttendance from "./MonthlyAttendance";
 
 const PAGE_SIZES = constants.PAGE_SIZES;
 
@@ -44,7 +43,7 @@ const Index = () => {
     direction: "asc", // desc
   });
 
-  let apiUrl = `/api/attendance/get-loggedin-users-manual-attendence/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  let apiUrl = `/api/attendance/get-manual-attendance/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
 
@@ -114,7 +113,7 @@ const Index = () => {
       key: "in_time",
       accessor: "in_time",
       title: "In Time",
-      sortable: true,
+      // sortable: true,
       noWrap: true,
       render: ({ in_time }) =>
         in_time ? convertTimeTo12HourFormat(in_time) : "N/A",
@@ -125,7 +124,7 @@ const Index = () => {
       key: "out_time",
       accessor: "out_time",
       title: "Out Time",
-      sortable: true,
+      // sortable: true,
       render: ({ out_time }) =>
         out_time ? convertTimeTo12HourFormat(out_time) : "N/A",
       modifier: ({ out_time }) =>
@@ -136,14 +135,18 @@ const Index = () => {
       accessor: "shift",
       title: "Shift",
       sortable: true,
-      render: ({ shift }) => shift?.name || "N/A",
+      render: ({
+        requested_by: {
+          shift: { name },
+        },
+      }) => name || "N/A",
     },
     {
-      key: "admin_note",
-      accessor: "admin_note",
-      title: "Admin Note",
-      sortable: true,
-      render: ({ admin_note }) => admin_note || "N/A",
+      key: "reason",
+      accessor: "reason",
+      title: "Reason",
+      // sortable: true,
+      render: ({ reason }) => reason || "N/A",
     },
     {
       key: "status",
@@ -241,8 +244,8 @@ const Index = () => {
       value: "shift",
     },
     {
-      label: "Admin Note",
-      value: "admin_note",
+      label: "Reason",
+      value: "reason",
     },
     {
       label: "Status",
@@ -260,7 +263,7 @@ const Index = () => {
     "in_time",
     "out_time",
     "shift",
-    "admin_note",
+    "reason",
     "status",
     "actions",
   ]);
@@ -640,12 +643,12 @@ const Index = () => {
 
       <div className="itemCard p-0 datatable-wrapper">
         <DataTable
-          // style={{
-          //   height:
-          //     !apiData?.data.result || apiData.data.result.length === 0
-          //       ? "300px"
-          //       : "auto",
-          // }}
+          style={{
+            height:
+              !apiData?.data.result || apiData.data.result.length === 0
+                ? "300px"
+                : "auto",
+          }}
           classNames={{
             root: "datatable",
             table: "datatable_table",
@@ -666,12 +669,10 @@ const Index = () => {
             selectedOptions.includes(column.key)
           )}
           fetching={isLoading}
-          records={apiData?.data || []}
-          // records={apiData?.data.result || []}
+          records={apiData?.data.result || []}
           page={currentPage}
           onPageChange={setCurrentPage}
-          totalRecords={apiData?.data.length}
-          // totalRecords={apiData?.data.count}
+          totalRecords={apiData?.data.count}
           recordsPerPage={pageSize}
           sortStatus={sortStatus}
           onSortStatusChange={handleSortStatusChange}
@@ -683,10 +684,6 @@ const Index = () => {
           // onRowContextMenu={handleContextMenu}
           // onScroll={hideContextMenu}
         />
-      </div>
-
-      <div className="itemCard">
-        <MonthlyAttendance />
       </div>
     </>
   );
