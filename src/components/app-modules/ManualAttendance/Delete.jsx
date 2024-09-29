@@ -7,7 +7,7 @@ const Index = ({ opened, close, item, mutate }) => {
   const handleDelete = async () => {
     try {
       const response = await deleteItem(
-        `/api/attendance/delete-manual-attendence/${item.id}`
+        `/api/attendance/delete-manual-attendance/${item.id}`
       );
 
       const res = await response.json();

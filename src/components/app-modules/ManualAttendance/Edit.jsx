@@ -1,21 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import useSWR from "swr";
 import { useForm } from "@mantine/form";
-import { DateInput, TimeInput } from "@mantine/dates";
+import { DateInput, DateTimePicker } from "@mantine/dates";
 import {
   Modal,
   Textarea,
   Button,
   Select,
   Group,
-  ActionIcon,
+  // ActionIcon,
 } from "@mantine/core";
-import { IoTimeOutline } from "react-icons/io5";
+// import { IoTimeOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { update } from "@/lib/submit";
 import { fetcher } from "@/lib/fetch";
-import { getFullName, formatDateToYYYYMMDD, formatTime } from "@/lib/helper";
 import UserSelectItem from "@/components/utils/UserSelectItem";
+import {
+  getFullName,
+  formatDateToYYYYMMDD,
+  formatTimeFromDateTime,
+} from "@/lib/helper";
 
 const Index = ({ opened, close, item, setItem, mutate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,18 +27,21 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      employee_id: "",
+      // employee_id: "",
+      requested_by: "",
       date: null,
       in_time: null,
       out_time: null,
-      admin_note: "",
-      // requested_by: ""
+      reason: "",
     },
     validate: {
-      employee_id: (value) => (!value ? "Employee is required" : null),
+      // employee_id: (value) => (!value ? "Employee is required" : null),
+      requested_by: (value) => (!value ? "Employee is required" : null),
       date: (value) => (!value ? "Date is required" : null),
-      in_time: (value) => (!value ? "In time is required" : null),
-      out_time: (value) => (!value ? "Out time is required" : null),
+      in_time: (value, values) =>
+        !value && !values.out_time ? "In time is required" : null,
+      out_time: (value, values) =>
+        !value && !values.in_time ? "Out time is required" : null,
       // admin_note: (value) => (!value ? "Reason is required" : null),
     },
   });
@@ -42,11 +49,11 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
   useEffect(() => {
     if (item) {
       form.setValues({
-        employee_id: item?.employee_id?.toString() || "",
+        requested_by: item?.requested_by?.id?.toString() || "",
         date: item?.date ? new Date(item.date) : null,
-        in_time: item?.in_time || null,
-        out_time: item?.out_time || null,
-        admin_note: item?.admin_note || "",
+        // in_time: item?.in_time || null,
+        // out_time: item?.out_time || null,
+        reason: item?.reason || "",
       });
     }
   }, [item]);
@@ -72,37 +79,37 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
     value: item?.id.toString() || "",
   }));
 
-  const refInTime = useRef(null);
+  // const refInTime = useRef(null);
 
-  const inTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refInTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
+  // const inTime = (
+  //   <ActionIcon
+  //     variant="subtle"
+  //     color="gray"
+  //     onClick={() => refInTime.current?.showPicker()}
+  //   >
+  //     <IoTimeOutline />
+  //   </ActionIcon>
+  // );
 
-  const refOutTime = useRef(null);
+  // const refOutTime = useRef(null);
 
-  const outTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refOutTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
+  // const outTime = (
+  //   <ActionIcon
+  //     variant="subtle"
+  //     color="gray"
+  //     onClick={() => refOutTime.current?.showPicker()}
+  //   >
+  //     <IoTimeOutline />
+  //   </ActionIcon>
+  // );
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
 
     try {
       const formattedDate = formatDateToYYYYMMDD(values.date);
-      const formattedInTime = formatTime(values.in_time);
-      const formattedOutTime = formatTime(values.out_time);
+      const formattedInTime = formatTimeFromDateTime(values.in_time);
+      const formattedOutTime = formatTimeFromDateTime(values.out_time);
 
       const formattedValues = {
         ...values,
@@ -112,7 +119,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       };
 
       const response = await update(
-        `/api/attendance/update-manual-attendence/${item?.id}`,
+        `/api/attendance/update-manual-attendance/${item?.id}`,
         formattedValues
       );
 
@@ -173,8 +180,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             data={employees}
             searchable
             nothingFoundMessage="Nothing found..."
-            {...form.getInputProps("employee_id")}
-            key={form.key("employee_id")}
+            {...form.getInputProps("requested_by")}
+            key={form.key("requested_by")}
             renderOption={UserSelectItem}
           />
           <DateInput
@@ -187,22 +194,28 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             {...form.getInputProps("date")}
             key={form.key("date")}
           />
-          <TimeInput
+          <DateTimePicker
             mb="sm"
             label="In Time"
-            ref={refInTime}
-            rightSection={inTime}
+            placeholder="Pick in time"
+            valueFormat="DD MMM YYYY hh:mm A"
+            clearable
+            // ref={refInTime}
+            // rightSection={inTime}
             // withSeconds
             required
             disabled={isSubmitting}
             {...form.getInputProps("in_time")}
             key={form.key("in_time")}
           />
-          <TimeInput
+          <DateTimePicker
             mb="sm"
             label="Out Time"
-            ref={refOutTime}
-            rightSection={outTime}
+            placeholder="Pick out time"
+            valueFormat="DD MMM YYYY hh:mm A"
+            clearable
+            // ref={refOutTime}
+            // rightSection={outTime}
             // withSeconds
             required
             disabled={isSubmitting}
@@ -214,7 +227,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             label="Reason"
             placeholder="Reason"
             disabled={isSubmitting}
-            {...form.getInputProps("admin_note")}
+            {...form.getInputProps("reason")}
           />
 
           <Group justify="flex-end" mt="sm">

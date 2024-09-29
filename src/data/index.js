@@ -38,3 +38,17 @@ export const jobStatus = [
   "Retired",
   "Expired",
 ];
+
+export const attendanceStatus = [
+  "Present",
+  "Half Day",
+  "Absent",
+  "Incomplete",
+  "Leave",
+  "Late Attendance",
+  "Early Leave",
+  "Overtime",
+  "Holiday",
+];
+
+export const attendanceModes = ["Device", "Manual", "Remote"];

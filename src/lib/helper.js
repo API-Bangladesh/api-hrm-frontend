@@ -167,6 +167,18 @@ export const formatTime = (time) => {
   return `${hours}:${minutes}:${seconds}`;
 };
 
+export const formatTimeFromDateTime = (dateTime) => {
+  if (dateTime) {
+    const time = dateTime.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    const [hours, minutes, seconds = "00"] = time.split(":");
+    return `${hours}:${minutes}:${seconds}`;
+  }
+};
+
 export const formatDateToYYYYMMDD = (date) => {
   if (!date) return null;
 

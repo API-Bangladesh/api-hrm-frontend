@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
@@ -7,10 +8,10 @@ import { toast } from "react-toastify";
 import {
   Button,
   Select,
-  Menu,
+  // Menu,
   MultiSelect,
   Popover,
-  Input,
+  // Input,
   Modal,
   Group,
 } from "@mantine/core";
@@ -28,20 +29,41 @@ import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
 import { constants } from "@/lib/config";
 import { getStoragePath } from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
-import FilterModal from "./FilterModal";
+import FilterModal from "./Filter";
 const PAGE_SIZES = constants.PAGE_SIZES;
 
 const Index = () => {
+  const [filterOpened, { open: filterOpen, close: filterClose }] =
+    useDisclosure(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [sortStatus, setSortStatus] = useState({
-    columnAccessor: "username",
+    columnAccessor: "in_time",
     direction: "asc", // desc
   });
 
-  let apiUrl = `/api/user/get-employee/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  const [filterData, setFilterData] = useState(null);
+
+  let apiUrl = `/api/attendance/get-log-data/?employee=all&page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
+
+  if (filterData) {
+    Object.keys(filterData).forEach((key) => {
+      const value = filterData[key];
+
+      if (Array.isArray(value)) {
+        if (value[0] !== null && value[1] !== null) {
+          apiUrl += `&${key}_from=${encodeURIComponent(
+            value[0]
+          )}&${key}_to=${encodeURIComponent(value[1])}`;
+        }
+      } else if (value) {
+        apiUrl += `&${key}=${encodeURIComponent(value)}`;
+      }
+    });
+  }
 
   const {
     data: apiData,
@@ -55,7 +77,7 @@ const Index = () => {
     revalidateOnFocus: false,
   });
 
-  const [selectedRecords, setSelectedRecords] = useState([]);
+  // const [selectedRecords, setSelectedRecords] = useState([]);
 
   const handleSortStatusChange = (status) => {
     console.log(status);
@@ -69,63 +91,59 @@ const Index = () => {
     // mutate();
   };
 
-  // for Modal
-  const [addOpened, { open: addOpen, close: addClose }] = useDisclosure(false);
-  const [editOpened, { open: editOpen, close: editClose }] =
-    useDisclosure(false);
-  const [deleteOpened, { open: deleteOpen, close: deleteClose }] =
-    useDisclosure(false);
-
-  const [selectedEditItem, setSelectedEditItem] = useState(null);
-  const [selectedDeleteItem, setSelectedDeleteItem] = useState(null);
-
-  useEffect(() => {
-    if (selectedEditItem) {
-      editOpen();
-    }
-  }, [selectedEditItem]);
-
   const columns = [
     {
-      // for table display
+      key: "employee",
       accessor: "employee",
       title: "Employee",
       sortable: false,
-      render: ({ id, photo, first_name, last_name }) => (
-        <div className="d-flex justify-content-start align-items-center">
-          {photo ? (
+      width: 170,
+      render: ({
+        employee: { id, photo, first_name, last_name, official_id },
+      }) => (
+        <Link
+          href={`/profile/${id}`}
+          className="d-flex justify-content-start align-items-center text-decoration-none color-inherit"
+        >
+          <span className="table_user_img">
             <img
-              src={getStoragePath(photo)}
-              alt="img"
-              className="table_user_img"
+              src={photo ? getStoragePath(photo) : "/default-profile.png"}
+              alt=""
+              onError={(e) => {
+                e.target.src = "/default-profile.png";
+              }}
             />
-          ) : (
-            ""
-          )}
-          <Link
-            href={`/profile/${id}`}
-            className="ms-2 text-decoration-none color-inherit"
-          >
-            {first_name + " " + last_name}
-          </Link>
-        </div>
+          </span>
+          <div className="d-flex flex-column justify-content-center ms-2 table_user">
+            <h6 className="table_user_name">
+              {getFullName(first_name, last_name)}
+            </h6>
+            {official_id && (
+              <span className="table_user_id">{official_id}</span>
+            )}
+          </div>
+        </Link>
       ),
-      // for export
-      key: "employee",
+      // modifier: ({
+      //   employee: { id, photo, first_name, last_name, official_id },
+      // }) => getFullName(first_name, last_name),
     },
     {
+      key: "device",
       accessor: "device",
       title: "Device",
       // visibleMediaQuery: aboveXs,
       render: ({ device }) => device?.name || "N/A",
     },
     {
+      key: "date",
       accessor: "date",
       title: "Date",
       // visibleMediaQuery: aboveXs,
       render: ({ date }) => date || "N/A",
     },
     {
+      key: "logTime",
       accessor: "logTime",
       title: "Log Time",
       // visibleMediaQuery: aboveXs,
@@ -394,28 +412,26 @@ const Index = () => {
     }
   };
 
-  const [open1, setOpen1] = useState(false);
-  const [item1, setItem1] = useState("Designation");
+  const [opened, { open: open, close: close }] = useDisclosure(false);
 
-  const [item2, setItem2] = useState("Group");
-  const [item3, setItem3] = useState("Department");
-  const [item4, setItem4] = useState("Shift");
-  const icon = <CiSearch />;
-
-  const [filterOpened, { open: filterOpen, close: filterClose }] =
-    useDisclosure(false);
-  const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
-      <FilterModal opened={filterOpened} close={filterClose} />
+      <FilterModal
+        opened={filterOpened}
+        close={filterClose}
+        data={filterData}
+        setData={setFilterData}
+      />
+
       <div className="mb-4 d-flex justify-content-between">
         <Breadcrumb
-          title="Raw Data"
+          title="Log Data"
           items={[
             { title: "Dashboard", href: "/dashboard" },
-            { title: "Raw Data" },
+            { title: "Log Data" },
           ]}
         />
+
         <Modal opened={opened} onClose={close} title="Clear Raw data" centered>
           <form>
             <p>Are you sure want to Clear Raw data ?</p>
@@ -568,10 +584,9 @@ const Index = () => {
           verticalAlign="center"
           striped
           idAccessor="id"
-          //  columns={columns.filter((column) =>
-          //     selectedOptions.includes(column.key)
-          //  )}
-          columns={columns}
+          columns={columns.filter((column) =>
+            selectedOptions.includes(column.key)
+          )}
           fetching={isLoading}
           records={apiData?.data.result || []}
           page={currentPage}
