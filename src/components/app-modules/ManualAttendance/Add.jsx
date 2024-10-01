@@ -8,6 +8,7 @@ import {
   Button,
   Select,
   Group,
+  TextInput,
   // ActionIcon,
 } from "@mantine/core";
 // import { IoTimeOutline } from "react-icons/io5";
@@ -143,11 +144,14 @@ const Index = ({ opened, close, mutate }) => {
     <Modal
       classNames={{
         title: "modalTitle",
+        header: "modalHeader",
       }}
       opened={opened}
-      title="Add Attendance"
+      title="Add Manual Attendance"
       onClose={close}
       centered
+      size="md"
+      padding="40px"
     >
       <form
         onSubmit={form.onSubmit((values) => handleSubmit(values), handleError)}
@@ -203,14 +207,14 @@ const Index = ({ opened, close, mutate }) => {
           {...form.getInputProps("out_time")}
           key={form.key("out_time")}
         />
-        <Textarea
+        <TextInput
           mb="sm"
           label="Reason"
           placeholder="Reason"
           disabled={isSubmitting}
           {...form.getInputProps("reason")}
         />
-        <Group justify="flex-end" mt="sm">
+        <Group justify="flex-end" mt="xl">
           <Button
             type="submit"
             loading={isSubmitting}
