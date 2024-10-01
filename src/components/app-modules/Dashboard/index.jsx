@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
+import useSWR from "swr";
 import Link from "next/link";
 import { data } from "./data";
 import { data2 } from "./data2";
@@ -16,6 +17,8 @@ import { HiArrowLongRight } from "react-icons/hi2";
 import { CgFileDocument } from "react-icons/cg";
 import { FcDocument } from "react-icons/fc";
 import MonthlyAttendance from "./MonthlyAttendance";
+import { fetcher } from "@/lib/fetch";
+import { getDate, getTime } from "@/lib/helper";
 
 const arrowIcon = <HiArrowLongRight />;
 
@@ -105,7 +108,22 @@ const attendanceData = [
   },
 ];
 
-const index = () => {
+const Index = () => {
+  // fatch notices
+  let apiUrl = `/api/notice/get-noticeboard/?page=1&page_size=20`;
+
+  const {
+    data: notices,
+    error,
+    isValidating,
+    isLoading,
+    mutate,
+  } = useSWR(apiUrl, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
+
   const [opened, { open, close }] = useDisclosure(false);
   const autoplay = useRef(Autoplay({ delay: 2000 }));
 
@@ -189,146 +207,49 @@ const index = () => {
                 View All
               </Button>
             </div>
-            <Carousel
-              // withIndicators
-              height={400}
-              slideSize="20%"
-              slideGap={0}
-              loop
-              align="start"
-              slidesToScroll={1}
-              // plugins={[autoplay.current]}
-              // onMouseEnter={autoplay.current.stop}
-              // onMouseLeave={autoplay.current.play}
-              orientation="vertical"
-            >
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      1. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      2. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      3. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      4. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      5. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-              <Carousel.Slide>
-                <Button
-                  onClick={open}
-                  classNames={{
-                    root: "rootBtn",
-                    label: "labelBtn",
-                    inner: "innerBtn",
-                  }}
-                >
-                  <div className="buttonItem">
-                    <CgFileDocument className="noticeIcon" />
-                    <p className="noticTitle mb-0 text-start">
-                      6. Lorem ipsum dolor sit amet, adipisicing elirdwe sit
-                      amet, adipisicing elirdwe
-                    </p>
-                    <p className="noticDate mb-0 d-block text-start py-2">
-                      02:10 PM | 21 Apr 2024
-                    </p>
-                  </div>
-                </Button>
-              </Carousel.Slide>
-            </Carousel>
+
+            {notices && notices?.data?.result?.length ? (
+              <Carousel
+                // withIndicators
+                height={400}
+                slideSize="20%"
+                slideGap={0}
+                loop
+                align="start"
+                slidesToScroll={1}
+                // plugins={[autoplay.current]}
+                // onMouseEnter={autoplay.current.stop}
+                // onMouseLeave={autoplay.current.play}
+                orientation="vertical"
+              >
+                {notices?.data?.result.map((notice, index) => (
+                  <Carousel.Slide key={index}>
+                    <Button
+                      onClick={open}
+                      classNames={{
+                        root: "rootBtn",
+                        label: "labelBtn",
+                        inner: "innerBtn",
+                      }}
+                    >
+                      <div className="buttonItem">
+                        <CgFileDocument className="noticeIcon" />
+                        <p className="noticTitle mb-0 text-start">
+                          {index + 1}. {notice?.title}
+                        </p>
+                        <p className="noticDate mb-0 d-block text-start py-2">
+                          {getTime(notice?.publish_date)} |{" "}
+                          {getDate(notice?.publish_date)}
+                          {/* 02:10 PM | 21 Apr 2024 */}
+                        </p>
+                      </div>
+                    </Button>
+                  </Carousel.Slide>
+                ))}
+              </Carousel>
+            ) : (
+              ""
+            )}
           </div>
         </Grid.Col>
       </Grid>
@@ -485,4 +406,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

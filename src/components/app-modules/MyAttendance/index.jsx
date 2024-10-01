@@ -135,11 +135,7 @@ const Index = () => {
       accessor: "shift",
       title: "Shift",
       sortable: true,
-      render: ({
-        requested_by: {
-          shift: { name },
-        },
-      }) => name || "N/A",
+      render: ({ requested_by: { shift } }) => shift?.name || "N/A",
     },
     {
       key: "reason",

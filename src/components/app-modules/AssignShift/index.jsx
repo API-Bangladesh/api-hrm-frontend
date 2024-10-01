@@ -215,15 +215,15 @@ const Index = () => {
                 verticalAlign="center"
                 striped
                 columns={[
-                  {
-                    title: "#",
-                    accessor: "na",
-                    width: 40,
-                    noWrap: true,
-                    sortable: false,
-                    render: (_, index) =>
-                      (currentPage - 1) * pageSize + index + 1,
-                  },
+                  // {
+                  //   title: "#",
+                  //   accessor: "na",
+                  //   width: 40,
+                  //   noWrap: true,
+                  //   sortable: false,
+                  //   render: (_, index) =>
+                  //     (currentPage - 1) * pageSize + index + 1,
+                  // },
                   {
                     // for table display
                     accessor: "photo",
