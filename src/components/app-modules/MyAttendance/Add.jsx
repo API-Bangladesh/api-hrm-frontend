@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useForm } from "@mantine/form";
 import { DateInput, DateTimePicker } from "@mantine/dates";
-import { Modal, Textarea, Button, Select, Group } from "@mantine/core";
+import {
+  Modal,
+  Textarea,
+  TextInput,
+  Button,
+  Select,
+  Group,
+} from "@mantine/core";
 import { toast } from "react-toastify";
 import { submit } from "@/lib/submit";
 import { formatDateToYYYYMMDD, formatTimeFromDateTime } from "@/lib/helper";
@@ -81,11 +88,14 @@ const Index = ({ opened, close, mutate }) => {
       <Modal
         classNames={{
           title: "modalTitle",
+          header: "modalHeader",
         }}
         opened={opened}
         title="Add Attendance Request"
         onClose={close}
         centered
+        size="md"
+        padding="40px"
       >
         <form
           onSubmit={form.onSubmit(
@@ -131,7 +141,7 @@ const Index = ({ opened, close, mutate }) => {
             {...form.getInputProps("out_time")}
             key={form.key("out_time")}
           />
-          <Textarea
+          <TextInput
             mb="sm"
             label="Reason"
             placeholder="Reason"
@@ -139,7 +149,7 @@ const Index = ({ opened, close, mutate }) => {
             {...form.getInputProps("reason")}
           />
 
-          <Group justify="flex-end" mt="sm">
+          <Group justify="flex-end" mt="xl">
             <Button
               type="submit"
               loading={isSubmitting}

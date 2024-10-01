@@ -13,6 +13,7 @@ import { authTokenKey, authUserKey } from "../../../lib/config";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "public/logo.png";
+import profileImg from "public/default-profile.png";
 import { useUser } from "@/components/contexts/UserContext";
 
 const Navbar = () => {
@@ -96,10 +97,11 @@ const Navbar = () => {
                 position="bottom-end"
                 color="green"
               >
-                <Avatar
-                  size="37"
-                  radius="xl"
-                  src={getStoragePath(user?.photo || "")}
+                <Image
+                  className="profile_img"
+                  // src={profileImg}
+                  src={user?.photo ? getStoragePath(user?.photo) : profileImg}
+                  alt="Picture"
                 />
               </Indicator>
               <span className="ms-2">

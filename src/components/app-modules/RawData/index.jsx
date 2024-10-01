@@ -432,11 +432,22 @@ const Index = () => {
           ]}
         />
 
-        <Modal opened={opened} onClose={close} title="Clear Raw data" centered>
+        <Modal
+          classNames={{
+            title: "modalTitle",
+            header: "modalHeader",
+          }}
+          opened={opened}
+          onClose={close}
+          title="Clear Raw data"
+          centered
+          size="md"
+          padding="40px"
+        >
           <form>
             <p>Are you sure want to Clear Raw data ?</p>
 
-            <Group justify="flex-end" mt="md">
+            <Group justify="flex-end" mt="xl">
               <Button onClick={close} variant="filled">
                 No
               </Button>
