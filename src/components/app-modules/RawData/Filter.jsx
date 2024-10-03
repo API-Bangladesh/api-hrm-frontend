@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import useSWR from "swr";
-import { DatePickerInput } from "@mantine/dates";
-import { DateInput } from "@mantine/dates";
+import { DatePickerInput, DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { Grid } from "@mantine/core";
 import {
+  Grid,
   Button,
   Select,
   Accordion,
@@ -59,8 +58,8 @@ const FilterModal = ({ opened, close, data, setData }) => {
       from_date: null,
       to_date: null,
       // gross_salary: [10000, 80000],
-      attendance_status: [],
-      // attendance_mode: [],
+      // attendance_status: [],
+      device: [],
     },
     validate: {
       // first_name: (value) => (!value ? "Name is required" : null),
@@ -131,6 +130,20 @@ const FilterModal = ({ opened, close, data, setData }) => {
 
   const companies = companyData?.data?.result?.map((item) => ({
     label: item?.basic_information?.name?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
+  const {
+    data: devicesData,
+    error: devicesError,
+    isLoading: isDevicesLoading,
+  } = useSWR(`/api/device/get-device/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const devices = devicesData?.data?.result?.map((item) => ({
+    label: item?.title?.toString() || "",
     value: item?.id.toString() || "",
   }));
 
@@ -287,9 +300,12 @@ const FilterModal = ({ opened, close, data, setData }) => {
       // attendance_mode: values.attendance_mode?.length
       //   ? values.attendance_mode.filter(Boolean).join(",")
       //   : values.attendance_mode,
-      attendance_status: values.attendance_status?.length
-        ? values.attendance_status.filter(Boolean).join(",")
-        : values.attendance_status,
+      // attendance_status: values.attendance_status?.length
+      //   ? values.attendance_status.filter(Boolean).join(",")
+      //   : values.attendance_status,
+      device: values.device?.length
+        ? values.device.filter(Boolean).join("--")
+        : values.device,
     };
 
     // delete formData.from_date;
@@ -307,7 +323,18 @@ const FilterModal = ({ opened, close, data, setData }) => {
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Filter" centered>
+    <Modal
+      classNames={{
+        title: "modalTitle",
+        header: "modalHeader",
+      }}
+      opened={opened}
+      onClose={close}
+      title="Filter"
+      centered
+      size="md"
+      padding="40px"
+    >
       <form
         onSubmit={form.onSubmit((values) => handleSubmit(values), handleError)}
       >
@@ -533,17 +560,10 @@ const FilterModal = ({ opened, close, data, setData }) => {
                     label="Device"
                     placeholder="Device"
                     hidePickedOptions
-                    data={[
-                      "Device 1",
-                      "Device 2",
-                      "Device 3",
-                      "Device 4",
-                      "Device 5",
-                      "Device 6",
-                    ]}
+                    data={devices}
                     searchable
                     // withAsterisk
-                    {...form.getInputProps("attendance_status")}
+                    {...form.getInputProps("device")}
                   />
                 </Grid.Col>
                 {/* <Grid.Col span={{ base: 12, lg: 12 }}>
@@ -562,7 +582,7 @@ const FilterModal = ({ opened, close, data, setData }) => {
           </Accordion.Item>
         </Accordion>
         <div className="d-flex justify-content-end">
-          <Button variant="filled" size="sm" mt="sm" type="submit">
+          <Button variant="filled" size="sm" mt="xl" type="submit">
             Search
           </Button>
         </div>

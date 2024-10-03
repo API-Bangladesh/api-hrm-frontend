@@ -38,9 +38,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           ? "Invalid IP address"
           : null,
       macaddress: (value) =>
-        !value
-          ? "MAC Address is required"
-          : !validateMACAddress(value)
+        value && !validateMACAddress(value)
           ? "Invalid MAC address format"
           : null,
     },
@@ -148,7 +146,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
               mb="sm"
               label="MAC Address"
               placeholder="MAC Address"
-              required={true}
+              // required={true}
               disabled={isSubmitting}
               {...form.getInputProps("macaddress")}
             />

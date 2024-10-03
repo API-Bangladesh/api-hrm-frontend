@@ -2,11 +2,10 @@
 
 import React, { useState } from "react";
 import useSWR from "swr";
-import { DatePickerInput } from "@mantine/dates";
-import { DateInput } from "@mantine/dates";
+import { DatePickerInput, DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
-import { Grid } from "@mantine/core";
 import {
+  Grid,
   Button,
   Select,
   Accordion,
@@ -285,10 +284,10 @@ const FilterModal = ({ opened, close, data, setData }) => {
       from_date: formatDateToYYYYMMDD(values.from_date),
       to_date: formatDateToYYYYMMDD(values.to_date),
       attendance_mode: values.attendance_mode?.length
-        ? values.attendance_mode.filter(Boolean).join(",")
+        ? values.attendance_mode.filter(Boolean).join("--")
         : values.attendance_mode,
       attendance_status: values.attendance_status?.length
-        ? values.attendance_status.filter(Boolean).join(",")
+        ? values.attendance_status.filter(Boolean).join("--")
         : values.attendance_status,
     };
 
@@ -307,7 +306,18 @@ const FilterModal = ({ opened, close, data, setData }) => {
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Filter" centered>
+    <Modal
+      classNames={{
+        title: "modalTitle",
+        header: "modalHeader",
+      }}
+      opened={opened}
+      onClose={close}
+      title="Filter"
+      centered
+      size="md"
+      padding="40px"
+    >
       <form
         onSubmit={form.onSubmit((values) => handleSubmit(values), handleError)}
       >
@@ -555,7 +565,7 @@ const FilterModal = ({ opened, close, data, setData }) => {
           </Accordion.Item>
         </Accordion>
         <div className="d-flex justify-content-end">
-          <Button variant="filled" size="sm" mt="sm" type="submit">
+          <Button variant="filled" size="sm" mt="xl" type="submit">
             Search
           </Button>
         </div>
