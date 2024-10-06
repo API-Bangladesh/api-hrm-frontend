@@ -93,8 +93,12 @@ const Index = ({ opened, close, mutate }) => {
 
     try {
       const formattedDate = formatDateToYYYYMMDD(values.date);
-      const formattedInTime = formatTime(values.in_time);
-      const formattedOutTime = formatTime(values.out_time);
+      const formattedInTime = values.in_time
+        ? formatTime(values.in_time)
+        : null;
+      const formattedOutTime = values.out_time
+        ? formatTime(values.out_time)
+        : null;
 
       const formattedValues = {
         ...values,
@@ -184,7 +188,8 @@ const Index = ({ opened, close, mutate }) => {
           ref={refInTime}
           rightSection={inTime}
           // withSeconds
-          required
+          // required
+          withAsterisk
           disabled={isSubmitting}
           {...form.getInputProps("in_time")}
           key={form.key("in_time")}
@@ -198,7 +203,8 @@ const Index = ({ opened, close, mutate }) => {
           ref={refOutTime}
           rightSection={outTime}
           // withSeconds
-          required
+          // required
+          withAsterisk
           disabled={isSubmitting}
           {...form.getInputProps("out_time")}
           key={form.key("out_time")}
@@ -207,6 +213,7 @@ const Index = ({ opened, close, mutate }) => {
           mb="sm"
           label="Reason"
           placeholder="Reason"
+          required
           disabled={isSubmitting}
           {...form.getInputProps("reason")}
         />
