@@ -98,10 +98,14 @@ const Navbar = () => {
                 color="green"
               >
                 <Image
+                  width={40}
+                  height={40}
                   className="profile_img"
-                  // src={profileImg}
                   src={user?.photo ? getStoragePath(user?.photo) : profileImg}
                   alt="Picture"
+                  // onError={(e) => {
+                  //   e.target.src = "/default-profile.png";
+                  // }}
                 />
               </Indicator>
               <span className="ms-2">
