@@ -27,9 +27,15 @@ import { FiTrash2 } from "react-icons/fi";
 import { fetcher, getData } from "@/lib/fetch";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
 import { constants } from "@/lib/config";
-import { getStoragePath } from "@/lib/helper";
+import {
+  getStoragePath,
+  getFullName,
+  getDate,
+  convertTimeTo12HourFormat,
+} from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import FilterModal from "./Filter";
+import ClearRawData from "./ClearRawData";
 const PAGE_SIZES = constants.PAGE_SIZES;
 
 const Index = () => {
@@ -39,13 +45,13 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [sortStatus, setSortStatus] = useState({
-    columnAccessor: "in_time",
+    columnAccessor: "date",
     direction: "asc", // desc
   });
 
   const [filterData, setFilterData] = useState(null);
 
-  let apiUrl = `/api/attendance/get-log-data/?employee=all&page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  let apiUrl = `/api/attendance/get-log-data/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
 
@@ -133,21 +139,23 @@ const Index = () => {
       accessor: "device",
       title: "Device",
       // visibleMediaQuery: aboveXs,
-      render: ({ device }) => device?.name || "N/A",
+      render: ({ device }) => device?.title || "",
     },
     {
       key: "date",
       accessor: "date",
       title: "Date",
+      sortable: true,
       // visibleMediaQuery: aboveXs,
-      render: ({ date }) => date || "N/A",
+      render: ({ date }) => (date ? getDate(date) : ""),
     },
     {
-      key: "logTime",
-      accessor: "logTime",
+      key: "in_time",
+      accessor: "in_time",
       title: "Log Time",
       // visibleMediaQuery: aboveXs,
-      render: ({ inTime }) => inTime || "N/A",
+      render: ({ in_time }) =>
+        in_time ? convertTimeTo12HourFormat(in_time) : "",
     },
   ];
 
@@ -166,7 +174,7 @@ const Index = () => {
     },
     {
       label: "Log Time",
-      value: "logTime",
+      value: "in_time",
     },
   ];
 
@@ -174,12 +182,12 @@ const Index = () => {
     "employee",
     "device",
     "date",
-    "logTime",
+    "in_time",
   ]);
 
   const handleChange = (keys) => {
     const updatedKeys = [
-      ...new Set(["employee", "device", "date", "logTime", ...keys]),
+      ...new Set(["employee", "device", "date", "in_time", ...keys]),
     ];
 
     const reorderedOptions = visibleColumns.filter((column) =>
@@ -423,6 +431,8 @@ const Index = () => {
         setData={setFilterData}
       />
 
+      <ClearRawData opened={opened} close={close} mutate={mutate} />
+
       <div className="mb-4 d-flex justify-content-between">
         <Breadcrumb
           title="Log Data"
@@ -432,31 +442,6 @@ const Index = () => {
           ]}
         />
 
-        <Modal
-          classNames={{
-            title: "modalTitle",
-            header: "modalHeader",
-          }}
-          opened={opened}
-          onClose={close}
-          title="Clear Raw data"
-          centered
-          size="md"
-          padding="40px"
-        >
-          <form>
-            <p>Are you sure want to Clear Raw data ?</p>
-
-            <Group justify="flex-end" mt="xl">
-              <Button onClick={close} variant="filled">
-                No
-              </Button>
-              <Button variant="filled" color="red">
-                Yes
-              </Button>
-            </Group>
-          </form>
-        </Modal>
         <Button
           color="red"
           size="lg"

@@ -1,26 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import useSWR from "swr";
 import { useForm } from "@mantine/form";
-import { DateInput, DateTimePicker } from "@mantine/dates";
+import { DateInput, TimeInput } from "@mantine/dates";
 import {
   Modal,
-  Textarea,
+  // Textarea,
   Button,
   Select,
   Group,
   TextInput,
-  // ActionIcon,
+  ActionIcon,
 } from "@mantine/core";
-// import { IoTimeOutline } from "react-icons/io5";
+import { IoTimeOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { submit } from "@/lib/submit";
 import { fetcher } from "@/lib/fetch";
 import UserSelectItem from "@/components/utils/UserSelectItem";
-import {
-  getFullName,
-  formatDateToYYYYMMDD,
-  formatTimeFromDateTime,
-} from "@/lib/helper";
+import { getFullName, formatDateToYYYYMMDD, formatTime } from "@/lib/helper";
 
 const Index = ({ opened, close, mutate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,37 +64,37 @@ const Index = ({ opened, close, mutate }) => {
     value: item?.id.toString() || "",
   }));
 
-  // const refInTime = useRef(null);
+  const refInTime = useRef(null);
 
-  // const inTime = (
-  //   <ActionIcon
-  //     variant="subtle"
-  //     color="gray"
-  //     onClick={() => refInTime.current?.showPicker()}
-  //   >
-  //     <IoTimeOutline />
-  //   </ActionIcon>
-  // );
+  const inTime = (
+    <ActionIcon
+      variant="subtle"
+      color="gray"
+      onClick={() => refInTime.current?.showPicker()}
+    >
+      <IoTimeOutline />
+    </ActionIcon>
+  );
 
-  // const refOutTime = useRef(null);
+  const refOutTime = useRef(null);
 
-  // const outTime = (
-  //   <ActionIcon
-  //     variant="subtle"
-  //     color="gray"
-  //     onClick={() => refOutTime.current?.showPicker()}
-  //   >
-  //     <IoTimeOutline />
-  //   </ActionIcon>
-  // );
+  const outTime = (
+    <ActionIcon
+      variant="subtle"
+      color="gray"
+      onClick={() => refOutTime.current?.showPicker()}
+    >
+      <IoTimeOutline />
+    </ActionIcon>
+  );
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
 
     try {
       const formattedDate = formatDateToYYYYMMDD(values.date);
-      const formattedInTime = formatTimeFromDateTime(values.in_time);
-      const formattedOutTime = formatTimeFromDateTime(values.out_time);
+      const formattedInTime = formatTime(values.in_time);
+      const formattedOutTime = formatTime(values.out_time);
 
       const formattedValues = {
         ...values,
@@ -179,28 +175,28 @@ const Index = ({ opened, close, mutate }) => {
           {...form.getInputProps("date")}
           key={form.key("date")}
         />
-        <DateTimePicker
+        <TimeInput
           mb="sm"
           label="In Time"
           placeholder="Pick in time"
-          valueFormat="DD MMM YYYY hh:mm A"
+          valueFormat="hh:mm A"
           clearable
-          // ref={refInTime}
-          // rightSection={inTime}
+          ref={refInTime}
+          rightSection={inTime}
           // withSeconds
           required
           disabled={isSubmitting}
           {...form.getInputProps("in_time")}
           key={form.key("in_time")}
         />
-        <DateTimePicker
+        <TimeInput
           mb="sm"
           label="Out Time"
           placeholder="Pick out time"
-          valueFormat="DD MMM YYYY hh:mm A"
+          valueFormat="hh:mm A"
           clearable
-          // ref={refOutTime}
-          // rightSection={outTime}
+          ref={refOutTime}
+          rightSection={outTime}
           // withSeconds
           required
           disabled={isSubmitting}

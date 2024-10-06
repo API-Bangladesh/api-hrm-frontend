@@ -1,84 +1,104 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
+import useSWR from "swr";
 import { useForm } from "@mantine/form";
-import { DateInput, TimeInput } from "@mantine/dates";
+import { DateInput, DateTimePicker } from "@mantine/dates";
 import {
   Modal,
-  // Textarea,
+  Textarea,
   Button,
   Select,
   Group,
   TextInput,
-  ActionIcon,
+  // ActionIcon,
 } from "@mantine/core";
-import { IoTimeOutline } from "react-icons/io5";
+// import { IoTimeOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
-import { update } from "@/lib/submit";
-import { formatDateToYYYYMMDD, formatTime } from "@/lib/helper";
+import { submit } from "@/lib/submit";
+import { fetcher } from "@/lib/fetch";
+import UserSelectItem from "@/components/utils/UserSelectItem";
+import {
+  getFullName,
+  formatDateToYYYYMMDD,
+  formatTimeFromDateTime,
+} from "@/lib/helper";
 
-const Index = ({ opened, close, item, setItem, mutate }) => {
+const Index = ({ opened, close, mutate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      // requested_by: "",
+      // employee_id: "",
+      requested_by: "",
       date: null,
       in_time: null,
       out_time: null,
       reason: "",
     },
     validate: {
-      // requested_by: (value) => (!value ? "Employee is required" : null),
+      // employee_id: (value) => (!value ? "Employee is required" : null),
+      requested_by: (value) => (!value ? "Employee is required" : null),
       date: (value) => (!value ? "Date is required" : null),
       in_time: (value, values) =>
         !value && !values.out_time ? "In time is required" : null,
       out_time: (value, values) =>
         !value && !values.in_time ? "Out time is required" : null,
+      // admin_note: (value) => (!value ? "Reason is required" : null),
     },
   });
 
-  useEffect(() => {
-    if (item) {
-      form.setValues({
-        date: item?.date ? new Date(item.date) : null,
-        in_time: item?.in_time || null,
-        out_time: item?.out_time || null,
-        reason: item?.reason || "",
-      });
-    }
-  }, [item]);
+  const {
+    data,
+    error,
+    isLoading: isFetchLoading,
+  } = useSWR(`/api/user/get-employee/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
 
-  const refInTime = useRef(null);
+  const employees = data?.data.result.map((item) => ({
+    label: [getFullName(item?.first_name, item?.last_name), item?.official_id]
+      .filter(Boolean)
+      .join(" - "),
+    firstName: item?.first_name || "",
+    lastName: item?.last_name || "",
+    officialID: item?.official_id,
+    image: item?.photo,
+    value: item?.id.toString() || "",
+  }));
 
-  const inTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refInTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
+  // const refInTime = useRef(null);
 
-  const refOutTime = useRef(null);
+  // const inTime = (
+  //   <ActionIcon
+  //     variant="subtle"
+  //     color="gray"
+  //     onClick={() => refInTime.current?.showPicker()}
+  //   >
+  //     <IoTimeOutline />
+  //   </ActionIcon>
+  // );
 
-  const outTime = (
-    <ActionIcon
-      variant="subtle"
-      color="gray"
-      onClick={() => refOutTime.current?.showPicker()}
-    >
-      <IoTimeOutline />
-    </ActionIcon>
-  );
+  // const refOutTime = useRef(null);
+
+  // const outTime = (
+  //   <ActionIcon
+  //     variant="subtle"
+  //     color="gray"
+  //     onClick={() => refOutTime.current?.showPicker()}
+  //   >
+  //     <IoTimeOutline />
+  //   </ActionIcon>
+  // );
 
   const handleSubmit = async (values) => {
     setIsSubmitting(true);
 
     try {
       const formattedDate = formatDateToYYYYMMDD(values.date);
-      const formattedInTime = formatTime(values.in_time);
-      const formattedOutTime = formatTime(values.out_time);
+      const formattedInTime = formatTimeFromDateTime(values.in_time);
+      const formattedOutTime = formatTimeFromDateTime(values.out_time);
 
       const formattedValues = {
         ...values,
@@ -87,17 +107,17 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
         out_time: formattedOutTime,
       };
 
-      const response = await update(
-        `/api/attendance/update-manual-attendance/${item?.id}`,
+      const response = await submit(
+        `/api/attendance/add-manual-attendance/`,
         formattedValues
       );
 
       if (response?.status === "success") {
         setIsSubmitting(false);
-        // form.reset();
+        form.reset();
         close();
         mutate();
-        toast.success("Attendance updated successfully");
+        toast.success("Attendance created successfully");
       } else {
         setIsSubmitting(false);
         if (response?.status === "error" && Array.isArray(response.message)) {
@@ -127,11 +147,8 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
         header: "modalHeader",
       }}
       opened={opened}
-      title="Edit Attendance Request"
-      onClose={() => {
-        setItem(null);
-        close();
-      }}
+      title="Add Manual Attendance"
+      onClose={close}
       centered
       size="md"
       padding="40px"
@@ -139,6 +156,19 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       <form
         onSubmit={form.onSubmit((values) => handleSubmit(values), handleError)}
       >
+        <Select
+          mb="sm"
+          label="Employee"
+          placeholder="Employee"
+          required
+          disabled={isSubmitting}
+          data={employees}
+          searchable
+          nothingFoundMessage="Nothing found..."
+          {...form.getInputProps("requested_by")}
+          key={form.key("requested_by")}
+          renderOption={UserSelectItem}
+        />
         <DateInput
           mb="sm"
           valueFormat="DD MMM YYYY"
@@ -149,28 +179,28 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           {...form.getInputProps("date")}
           key={form.key("date")}
         />
-        <TimeInput
+        <DateTimePicker
           mb="sm"
           label="In Time"
           placeholder="Pick in time"
-          valueFormat="hh:mm A"
+          valueFormat="DD MMM YYYY hh:mm A"
           clearable
-          ref={refInTime}
-          rightSection={inTime}
+          // ref={refInTime}
+          // rightSection={inTime}
           // withSeconds
           required
           disabled={isSubmitting}
           {...form.getInputProps("in_time")}
           key={form.key("in_time")}
         />
-        <TimeInput
+        <DateTimePicker
           mb="sm"
           label="Out Time"
           placeholder="Pick out time"
-          valueFormat="hh:mm A"
+          valueFormat="DD MMM YYYY hh:mm A"
           clearable
-          ref={refOutTime}
-          rightSection={outTime}
+          // ref={refOutTime}
+          // rightSection={outTime}
           // withSeconds
           required
           disabled={isSubmitting}
@@ -183,16 +213,14 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
           placeholder="Reason"
           disabled={isSubmitting}
           {...form.getInputProps("reason")}
-          key={form.key("reason")}
         />
-
-        <Group justify="flex-end" mt="sm">
+        <Group justify="flex-end" mt="xl">
           <Button
             type="submit"
             loading={isSubmitting}
             loaderProps={{ type: "dots" }}
           >
-            Update
+            Save
           </Button>
         </Group>
       </form>
