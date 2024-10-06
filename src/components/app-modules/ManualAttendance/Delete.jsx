@@ -27,19 +27,19 @@ const Index = ({ opened, close, item, mutate }) => {
 
   return (
     <Modal
-        classNames={{
-          title: "modalTitle",
-          header: "modalHeader",
-        }}
-        opened={opened}
-        title="Delete"
-        onClose={close}
-        centered
-        size="md"
-        padding="30px"
-      >
+      classNames={{
+        title: "modalTitle",
+        header: "modalHeader",
+      }}
+      opened={opened}
+      title="Delete"
+      onClose={close}
+      centered
+      size="md"
+      padding="30px"
+    >
       <form>
-        <p>Are you sure want to delete ?</p>
+        <p>Are you sure want to delete?</p>
 
         <Group justify="flex-end" mt="md">
           <Button onClick={close} variant="filled">
