@@ -20,7 +20,7 @@
 .profile img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 .proOverly {
   text-align: center;
@@ -57,32 +57,40 @@
 }
 
 .employeeName {
-  color: #373b3e;
+  font-weight: 700;
+  color: #333;
   font-size: 1.5rem;
 }
-.employeeDesig,
-.employeeJoin {
-  color: #7a7c7f;
+
+.employeeDesig {
+  color: #666;
+}
+
+.employeeText {
+  color: #666;
 }
 
 .borderRight {
   border-right: 2px dashed #ddd;
 }
-.employeeInfo p {
-  color: #7a7c7f;
-  margin-bottom: 5px;
+.pText.sColor,
+.sColor {
+  color: #fd7e14;
 }
-.employeeInfo span {
-  display: inline-block;
-  color: #373b3e;
+
+.employeeInfo {
+  margin-left: 25px;
+}
+.pTitle {
+  color: #222;
   font-weight: 600;
-  width: 200px;
+  width: 30%;
 }
-.phnNumber,
-.email {
-  color: var(--main-color);
+.pText {
+  color: #666;
   text-decoration: none;
 }
+
 .roundIcon {
   font-size: 12px;
   margin-bottom: 4px;

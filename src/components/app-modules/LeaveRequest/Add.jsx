@@ -286,6 +286,14 @@ const Index = ({ opened, close, mutate }) => {
               </Grid.Col>
             )}
             <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                label="Details"
+                placeholder="Details"
+                disabled={isSubmitting}
+                {...form.getInputProps("reason")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <DateInput
                 valueFormat="DD MMM YYYY"
                 label="From Date"
@@ -294,16 +302,6 @@ const Index = ({ opened, close, mutate }) => {
                 disabled={isSubmitting}
                 {...form.getInputProps("from_date")}
                 key={form.key("from_date")}
-              />
-            </Grid.Col>
-
-            <Grid.Col span={{ base: 12, lg: 6 }}>
-              <TextInput
-                disabled
-                label="Total Days"
-                placeholder="0"
-                value={totalLeave}
-                // {...form.getInputProps("total_leave")}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
@@ -318,6 +316,15 @@ const Index = ({ opened, close, mutate }) => {
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                disabled
+                label="Total Days"
+                placeholder="0"
+                value={totalLeave}
+                // {...form.getInputProps("total_leave")}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
               <FileInput
                 leftSection={<FiFile />}
                 label="Attachment"
@@ -329,14 +336,14 @@ const Index = ({ opened, close, mutate }) => {
                 key={form.key("attachment")}
               />
             </Grid.Col>
-            <Grid.Col span={{ base: 12, lg: 6 }}>
+            {/* <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
                 label="Details"
                 placeholder="Details"
                 disabled={isSubmitting}
                 {...form.getInputProps("reason")}
               />
-            </Grid.Col>
+            </Grid.Col> */}
           </Grid>
 
           <Group justify="flex-end" mt="xl">

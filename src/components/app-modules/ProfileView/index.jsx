@@ -288,7 +288,7 @@ const ProfileView = ({ data }) => {
         </button>
 
         <Grid>
-          <Grid.Col span={6}>
+          <Grid.Col span={{ base: 12, md: 12, lg: 6 }}>
             <div className="profileBox borderRight h-100 d-flex">
               <div className="profile position-relative">
                 <Image
@@ -321,98 +321,108 @@ const ProfileView = ({ data }) => {
                   {profile?.designation?.name || ""}
                 </h6>
 
-                <p className="employeeJoin mb-1">
+                <p className="mb-1 mt-3">
                   <b>Employee ID : {profile?.official_id || ""}</b>
                 </p>
-                <p className="employeeJoin mb-1">
+                <p className="employeeText mb-1">
                   Department: {profile?.departmenttwo?.[0]?.name || "N/A"}
                 </p>
-                <p className="employeeJoin mb-1">
+                <p className="employeeText mb-1">
                   Date of Join : {getDate(profile?.joining_date)}
                 </p>
-                <p className="employeeJoin">
+                <p className="employeeText">
                   <span>Reset Password:</span>
                   <button
-                    className="border-0 ms-2 px-2 py-1 text-dark rounded-1"
+                    className="border-0 ms-2 px-2 py-1 sColor rounded-1"
                     onClick={() => {
                       // setSelectedDeleteItem(item);
                       passwordOpen();
                     }}
                     // handleClick={addOpen}
                   >
-                    <TbEyeClosed className="iconBtn me-2 text-dark" />
+                    <TbEyeClosed className="iconBtn me-2 sColor" />
                     Reset
                   </button>
                 </p>
               </div>
             </div>
           </Grid.Col>
-          <Grid.Col span={6}>
-            <div className="employeeInfo h-100 ps-3">
-              <p>
-                <span>Phone:</span>
-                {profile?.personal_phone ? (
-                  <Link
-                    className="phnNumber"
-                    href={`tel:${profile?.personal_phone}`}
-                  >
-                    {profile?.personal_phone}
-                  </Link>
-                ) : (
-                  "N/A"
-                )}
-              </p>
-              <p>
-                <span>Email:</span>
-                {profile?.personal_email ? (
-                  <Link
-                    className="email"
-                    href={`mailto:${profile?.personal_email}`}
-                  >
-                    {profile?.personal_email}
-                  </Link>
-                ) : (
-                  "N/A"
-                )}
-              </p>
-              <p>
-                <span>Date of Birth:</span>
-                {getDate(profile?.dob)}
-              </p>
-              {/* <p>
-                        <span>Address:</span>Bayonne Ave, Manchester Township,
-                        Nkgkgke, Mancheste Real Likebto power tomaar Fcace door
-                     </p> */}
-              <p>
-                <span>Gender:</span>
-                {profile?.gender || "N/A"}
-              </p>
-              <p>
-                <span>Blood Group:</span>
-                {profile?.blood_group || ""}
-              </p>
-              <p>
-                <span>Marital Status:</span>
-                {profile?.marital_status || ""}
-              </p>
-              <p>
-                <span>Supervisor:</span>
-                <Image
-                  className="reportsImg"
-                  src={
-                    profile?.supervisor?.photo
-                      ? getStoragePath(profile?.supervisor?.photo)
-                      : "/default-profile.png"
-                  }
-                  width={200}
-                  height={200}
-                  alt="profile_img"
-                />
-                {getFullName(
-                  profile?.supervisor?.first_name,
-                  profile?.supervisor?.last_name
-                )}
-              </p>
+          <Grid.Col span={{ base: 12, md: 12, lg: 6 }}>
+            <div className="employeeInfo h-100">
+              <div className="d-flex">
+                <p className="pTitle">Phone:</p>
+                <p className="pText">
+                  {profile?.personal_phone ? (
+                    <Link
+                      className="pText sColor"
+                      href={`tel:${profile?.personal_phone}`}
+                    >
+                      {profile?.personal_phone}
+                    </Link>
+                  ) : (
+                    "N/A"
+                  )}
+                </p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Email:</p>
+                <p className="pText">
+                  {profile?.personal_email ? (
+                    <Link
+                      className="pText sColor"
+                      href={`mailto:${profile?.personal_email}`}
+                    >
+                      {profile?.personal_email}
+                    </Link>
+                  ) : (
+                    "N/A"
+                  )}
+                </p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Date of Birth:</p>
+                <p className="pText">{getDate(profile?.dob) || "N/A"}</p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Gender:</p>
+                <p className="pText">{profile?.gender || "N/A"}</p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Blood Group:</p>
+                <p className="pText">{profile?.blood_group || "N/A"}</p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Marital Status:</p>
+                <p className="pText">{profile?.marital_status || "N/A"}</p>
+              </div>
+              <div className="d-flex">
+                <p className="pTitle">Supervisor:</p>
+                <p className="pText">
+                  {profile?.supervisor ? (
+                    <div className="d-flex align-items-center">
+                      <Image
+                        className="reportsImg"
+                        src={
+                          profile?.supervisor?.photo
+                            ? getStoragePath(profile?.supervisor?.photo)
+                            : "/default-profile.png"
+                        }
+                        width={200}
+                        height={200}
+                        alt="profile_img"
+                      />
+                      <p className="pText sColor mb-0">
+                        {getFullName(
+                          profile?.supervisor?.first_name,
+                          profile?.supervisor?.last_name
+                        )}
+                      </p>
+                    </div>
+                  ) : (
+                    "N/A"
+                  )}
+                </p>
+              </div>
             </div>
           </Grid.Col>
         </Grid>

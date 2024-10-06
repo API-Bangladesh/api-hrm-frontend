@@ -285,7 +285,18 @@ const FilterModal = ({ opened, close, data, setData }) => {
   };
 
   return (
-    <Modal opened={opened} onClose={close} title="Filter" centered>
+    <Modal
+      classNames={{
+        title: "modalTitle",
+        header: "modalHeader",
+      }}
+      opened={opened}
+      onClose={close}
+      title="Filter"
+      centered
+      size="xl"
+      padding="40px"
+    >
       <form
         onSubmit={form.onSubmit((values) => handleSubmit(values), handleError)}
       >
