@@ -547,7 +547,7 @@ const Index = ({ opened, close, mutate }) => {
                 renderOption={UserSelectItem}
                 searchable
               />
-              <p className="mb-1">Status Adjustment</p>
+              <p className="mb-2 mt-4">Status Adjustment</p>
               <div className="d-flex flex-wrap">
                 <Checkbox
                   mb="sm"

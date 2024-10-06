@@ -107,6 +107,7 @@ const Index = ({ opened, close, mutate }) => {
           <Grid>
             <Grid.Col span={12}>
               <TextInput
+                mb="sm"
                 label="Title"
                 placeholder="Title"
                 required
@@ -114,8 +115,8 @@ const Index = ({ opened, close, mutate }) => {
                 {...form.getInputProps("title")}
               />
 
-              <Textarea
-                mt="md"
+              <TextInput
+                mb="sm"
                 label="Description"
                 placeholder="Description"
                 disabled={isSubmitting}
@@ -123,7 +124,7 @@ const Index = ({ opened, close, mutate }) => {
               />
 
               <DateInput
-                mt="md"
+                mb="sm"
                 valueFormat="DD MMM YYYY"
                 label="Date"
                 placeholder="DD MMM YYYY"
@@ -133,7 +134,7 @@ const Index = ({ opened, close, mutate }) => {
               />
 
               <Select
-                mt="md"
+                mb="sm"
                 label="Employee Grade"
                 placeholder="Employee Grade"
                 data={grades}
@@ -142,7 +143,7 @@ const Index = ({ opened, close, mutate }) => {
               />
 
               <Checkbox
-                mt="md"
+                mt="sm"
                 label="Is Recurring?"
                 disabled={isSubmitting}
                 {...form.getInputProps("is_recuring", { type: "checkbox" })}

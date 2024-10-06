@@ -35,7 +35,7 @@ const Index = ({ opened, close, item, mutate }) => {
         onClose={close}
         centered
         size="md"
-        padding="40px"
+        padding="30px"
       >
         <form>
           <p>Are you sure want to delete ?</p>
