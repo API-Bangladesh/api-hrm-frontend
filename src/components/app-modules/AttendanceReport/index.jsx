@@ -206,6 +206,9 @@ const Index = () => {
       width: 140,
       render: ({ late_time }) =>
         late_time ? Number(late_time).toFixed(0) : "",
+      // footer: (
+      //   <div>{apiData?.data?.sum_info?.total_late_time?.toFixed(0) || ""}</div>
+      // ),
     },
     {
       key: "early_leave",
@@ -214,6 +217,11 @@ const Index = () => {
       width: 140,
       render: ({ early_leave }) =>
         early_leave ? Number(early_leave).toFixed(0) : "",
+      // footer: (
+      //   <div>
+      //     {apiData?.data?.sum_info?.total_early_leave?.toFixed(0) || ""}
+      //   </div>
+      // ),
     },
     {
       key: "overtime",
@@ -222,6 +230,9 @@ const Index = () => {
       width: 140,
       render: ({ over_time }) =>
         over_time ? Number(over_time).toFixed(0) : "",
+      // footer: (
+      //   <div>{apiData?.data?.sum_info?.total_over_time?.toFixed(0) || ""}</div>
+      // ),
     },
     {
       key: "working_hours",
@@ -230,6 +241,11 @@ const Index = () => {
       width: 140,
       render: ({ working_minutes }) =>
         working_minutes ? Number(working_minutes).toFixed(0) : "",
+      // footer: (
+      //   <div>
+      //     {apiData?.data?.sum_info?.total_working_minutes?.toFixed(0) || ""}
+      //   </div>
+      // ),
     },
   ];
 
