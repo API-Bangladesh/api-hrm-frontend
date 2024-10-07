@@ -116,7 +116,7 @@ const Index = ({ opened, close, mutate }) => {
         />
         <Checkbox
           mb="sm"
-          label="Is Exempted From Tax"
+          label="Is Exempted From Tax?"
           disabled={isSubmitting}
           {...form.getInputProps("exempted_for_tax", { type: "checkbox" })}
         />

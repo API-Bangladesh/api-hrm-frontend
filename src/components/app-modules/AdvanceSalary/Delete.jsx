@@ -23,7 +23,7 @@ const Index = ({ opened, close }) => {
             <Button onClick={close} variant="filled">
               No
             </Button>
-            <Button variant="filled" color="red" onClick={handleDelete}>
+            <Button variant="filled" color="red">
               Yes
             </Button>
           </Group>

@@ -187,9 +187,7 @@ const Index = () => {
       width: 120,
       render: ({ attendance_status }) =>
         attendance_status?.length
-          ? generateStringFromArray(
-              attendance_status.map((item) => item?.status).filter(Boolean)
-            )
+          ? generateStringFromArray(attendance_status)
           : "",
     },
     {

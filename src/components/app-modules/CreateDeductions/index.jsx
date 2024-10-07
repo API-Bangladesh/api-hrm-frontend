@@ -10,7 +10,7 @@ import {
   Menu,
   MultiSelect,
   Popover,
-  Input,
+  // Input,
 } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
 import { AiOutlineFilePdf, AiOutlineDelete } from "react-icons/ai";
@@ -28,7 +28,7 @@ import AddButton from "@/components/utils/AddButton";
 import Add from "./Add";
 import Edit from "./Edit";
 import Delete from "./Delete";
-import FilterModal from "./Filter";
+// import FilterModal from "./Filter";
 
 const PAGE_SIZES = constants.PAGE_SIZES;
 
@@ -40,20 +40,20 @@ const Index = () => {
     direction: "asc", // desc
   });
 
-  const [filterData, setFilterData] = useState(null);
+  // const [filterData, setFilterData] = useState(null);
 
   let apiUrl = `/api/payroll/get-payrolldeduction/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
 
-  if (filterData) {
-    Object.keys(filterData).forEach((key) => {
-      const value = filterData[key];
-      if (value) {
-        apiUrl += `&${key}=${encodeURIComponent(value)}`;
-      }
-    });
-  }
+  // if (filterData) {
+  //   Object.keys(filterData).forEach((key) => {
+  //     const value = filterData[key];
+  //     if (value) {
+  //       apiUrl += `&${key}=${encodeURIComponent(value)}`;
+  //     }
+  //   });
+  // }
 
   // console.log(apiUrl);
 
@@ -90,8 +90,8 @@ const Index = () => {
   const [deleteOpened, { open: deleteOpen, close: deleteClose }] =
     useDisclosure(false);
 
-  const [filterOpened, { open: filterOpen, close: filterClose }] =
-    useDisclosure(false);
+  // const [filterOpened, { open: filterOpen, close: filterClose }] =
+  //   useDisclosure(false);
 
   const [selectedEditItem, setSelectedEditItem] = useState(null);
   const [selectedDeleteItem, setSelectedDeleteItem] = useState(null);
@@ -515,12 +515,12 @@ const Index = () => {
 
   return (
     <>
-      <FilterModal
+      {/* <FilterModal
         opened={filterOpened}
         close={filterClose}
         data={filterData}
         setData={setFilterData}
-      />
+      /> */}
 
       <Add
         opened={addOpened} //
@@ -560,7 +560,7 @@ const Index = () => {
         />
       </div>
 
-      <div className="filterBox mb-4 d-flex align-items-center">
+      {/* <div className="filterBox mb-4 d-flex align-items-center">
         <Input
           classNames={{
             input: "searchBtn",
@@ -571,7 +571,7 @@ const Index = () => {
         <Button className="ms-3" onClick={filterOpen}>
           Filter
         </Button>
-      </div>
+      </div> */}
 
       <div className="d-flex justify-content-between mb-3 flex-wrap">
         <div className="showItem d-flex align-items-center">

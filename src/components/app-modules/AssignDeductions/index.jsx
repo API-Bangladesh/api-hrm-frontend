@@ -1,167 +1,24 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import useSWR from "swr";
 import { useDisclosure } from "@mantine/hooks";
-import { Grid } from "@mantine/core";
-import { countries } from "@/data/countries";
+import { Grid, Button, MultiSelect } from "@mantine/core";
+import { toast } from "react-toastify";
 import { DataTable } from "mantine-datatable";
-import { submit } from "../../../lib/submit";
-import { fetcher } from "../../../lib/fetch";
-import {
-  Button,
-  Select,
-  Breadcrumbs,
-  Anchor,
-  Accordion,
-  TextInput,
-  MultiSelect,
-  Popover,
-  Box,
-  Modal,
-  NumberInput,
-} from "@mantine/core";
-import {
-  formatDate,
-  getDate,
-  getTime,
-  getStoragePath,
-} from "../../../lib/helper";
+import { constants } from "@/lib/config";
+import { submit } from "@/lib/submit";
+import { fetcher } from "@/lib/fetch";
+import { getStoragePath, getFullName } from "@/lib/helper";
+import Breadcrumb from "@/components/utils/Breadcrumb";
+import FilterModal from "@/components/utils/EmployeeFilterModal";
 
-const PAGE_SIZES = [5, 10, 15, 20];
-const items = [
-  { title: "Dashboard", href: "/" },
-  { title: "Assign Deductions" },
-].map((item, index) => (
-  <Anchor href={item.href} key={index}>
-    {item.title}
-  </Anchor>
-));
-
-const accordionData = [
-  {
-    value: "Employee",
-    dataInput: (
-      <Grid>
-        <Grid.Col span={6}>
-          <TextInput
-            classNames={{
-              root: "jiaurBD",
-              label: "jiaurBD",
-              wrapper: "jiaurBD",
-            }}
-            label="First Name"
-            placeholder="First Name"
-            mb="xs"
-          />
-          <TextInput label="Email" placeholder="example@gmail.com" mb="xs" />
-          <Select
-            classNames={{
-              root: "jiaurBD",
-              label: "jiaurBD",
-              wrapper: "jiaurBD",
-            }}
-            label="Country"
-            placeholder="Country"
-            searchable
-            data={countries}
-            //  {...form.getInputProps("presentAddress.country")}
-          />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <TextInput
-            classNames={{
-              root: "jiaurBD",
-              label: "jiaurBD",
-              wrapper: "jiaurBD",
-            }}
-            label="Last Name"
-            placeholder="Last Name"
-            mb="xs"
-          />
-          <NumberInput
-            classNames={{
-              root: "jiaurBD",
-              label: "jiaurBD",
-              wrapper: "jiaurBD",
-            }}
-            rightSection={<></>}
-            rightSectionWidth={0}
-            label="Contact No."
-            placeholder="Contact No"
-            mb="xs"
-          />
-          <Select
-            classNames={{
-              root: "jiaurBD",
-              label: "jiaurBD",
-              wrapper: "jiaurBD",
-            }}
-            label="Gender"
-            placeholder="Gender"
-            data={["Male", "Female", "Other"]}
-          />
-        </Grid.Col>
-      </Grid>
-    ),
-  },
-  {
-    value: "Work Info",
-    dataInput: (
-      <Grid>
-        <Grid.Col span={6}>
-          <TextInput label="Company" placeholder="Company" mb="xs" />
-
-          <TextInput label="Department" placeholder="Department" mb="xs" />
-          <Select
-            label="Employee type"
-            placeholder="Employee type"
-            // searchable
-            data={["Employee type-1", "Employee type-2"]}
-            mb="xs"
-          />
-          <TextInput label="Grade" placeholder="Grade" mb="xs" />
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <Select
-            label="Branch"
-            placeholder="Branch"
-            // searchable
-            data={["Dhaka", "Rangpur", "Dinajpur"]}
-            mb="xs"
-          />
-          <TextInput label="Designation" placeholder="Designation" mb="xs" />
-
-          <Select
-            label="Group"
-            placeholder="Group"
-            // searchable
-            data={["Group-1", "Group-2"]}
-            mb="xs"
-          />
-
-          <Select
-            label="Shift"
-            placeholder="Shift"
-            // searchable
-            data={["Day", "Night"]}
-            mb="xs"
-          />
-        </Grid.Col>
-      </Grid>
-    ),
-  },
-];
+const PAGE_SIZES = constants.PAGE_SIZES;
 
 const Index = () => {
-  // See groceries data above
-  const itemsAccordion = accordionData.map((item) => (
-    <Accordion.Item key={item.value} value={item.value}>
-      <Accordion.Control>{item.value}</Accordion.Control>
-      <Accordion.Panel>{item.dataInput}</Accordion.Panel>
-    </Accordion.Item>
-  ));
-
-  const [opened, { open, close }] = useDisclosure(false);
+  const [filterOpened, { open: filterOpen, close: filterClose }] =
+    useDisclosure(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
@@ -170,73 +27,171 @@ const Index = () => {
     direction: "asc", // desc
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedDeductions, setSelectedDeductions] = useState([]);
+
+  const [filterData, setFilterData] = useState(null);
+
+  let apiUrl = `/api/user/get-employee/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+    sortStatus?.direction === "desc" ? "-" : ""
+  }${sortStatus.columnAccessor}`;
+
+  if (filterData) {
+    Object.keys(filterData).forEach((key) => {
+      const value = filterData[key];
+
+      if (Array.isArray(value)) {
+        if (value[0] !== null && value[1] !== null) {
+          apiUrl += `&${key}_from=${encodeURIComponent(
+            value[0]
+          )}&${key}_to=${encodeURIComponent(value[1])}`;
+        }
+      } else if (value) {
+        apiUrl += `&${key}=${encodeURIComponent(value)}`;
+      }
+    });
+  }
+
   const {
     data: apiData,
     error,
     isValidating,
     isLoading,
     mutate,
-  } = useSWR(
-    `/employee/?page=${1}&page_size=${pageSize}&column_accessor=${
-      sortStatus.columnAccessor
-    }&direction=${sortStatus.direction}`,
-    fetcher,
-    {
-      errorRetryCount: 2,
-      keepPreviousData: true,
-    }
-  );
+  } = useSWR(apiUrl, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
+
+  const {
+    data: deductionsData,
+    error: deductionsError,
+    isLoading: isDeductionsLoading,
+  } = useSWR(`/api/payroll/get-payrolldeduction/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const deductions = deductionsData?.data?.result?.map((item) => ({
+    label: item?.title?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
   const [selectedRecords, setSelectedRecords] = useState([]);
+
+  const handleSortStatusChange = (status) => {
+    console.log(status);
+    setSortStatus(status);
+    setCurrentPage(1);
+  };
+
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+    // mutate();
+  };
+
+  useEffect(() => {
+    setSelectedRecords([]);
+  }, [filterData]);
+
+  const handleBulkAssign = async () => {
+    const employees = selectedRecords.map((e) => Number(e?.id)).filter(Boolean);
+    const deducts = selectedDeductions.map((a) => Number(a)).filter(Boolean);
+
+    const values = {
+      user: employees,
+      payrolldeduction: deducts,
+    };
+
+    if (!values?.payrolldeduction?.length) {
+      toast.error("Select deduction");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await submit(
+        "/api/payroll/assign-payrolldeduction/",
+        values
+      );
+
+      if (response?.status === "success") {
+        // console.log(response);
+        setIsSubmitting(false);
+        // form.reset();
+        // close();
+        setSelectedDeductions([]);
+        setSelectedRecords([]);
+        mutate();
+        toast.success("Deduction assigned successfully");
+      } else {
+        setIsSubmitting(false);
+        if (response?.status === "error" && Array.isArray(response.message)) {
+          response.message.forEach((msg) => {
+            toast.error(msg);
+          });
+        } else {
+          toast.error("Error updating");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating:", error);
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 500);
+    }
+  };
+
   return (
     <>
+      <FilterModal
+        opened={filterOpened}
+        close={filterClose}
+        data={filterData}
+        setData={setFilterData}
+      />
+
       <div className="pageTop mb-4">
-        <h3>Assign Deductions</h3>
-        <Breadcrumbs>{items}</Breadcrumbs>
+        <Breadcrumb
+          title="Assign Deductions"
+          items={[
+            { title: "Dashboard", href: "/dashboard" },
+            { title: "Assign Deductions" },
+          ]}
+        />
       </div>
 
       <div id="leavePolicy" className="itemCard">
         <Grid>
           <Grid.Col span={{ base: 12, md: 7, lg: 7, xl: 4 }}>
-            <Select
+            <MultiSelect
               classNames={{
                 root: "cust_iputRoot notFlex",
                 label: "cust_iputLabel other_label",
                 wrapper: "cust_iputWrapper",
               }}
-              mb="md"
-              label="Leave Policy"
-              placeholder="Leave Policy"
-              data={[
-                "Policy-1",
-                "Policy-2",
-                "Policy-3",
-                "Policy-4",
-                "Policy-5",
-                "Policy-6",
-              ]}
+              label="Deduction Policies"
+              placeholder="Deduction Policies"
+              data={deductions}
               searchable
+              value={selectedDeductions}
+              onChange={setSelectedDeductions}
             />
-            <Modal opened={opened} onClose={close} title="Filter" centered>
-              <Accordion defaultValue="">{itemsAccordion}</Accordion>
-              <div className="d-flex justify-content-end">
-                <Button variant="filled" size="sm" mt="sm">
-                  Search
-                </Button>
-              </div>
-            </Modal>
-
             <div className="d-flex align-items-center my-4">
               <p className="mb-0 employeeLabel">Employee</p>
-              <Button onClick={open}>Filter</Button>
+              <Button onClick={filterOpen}>Filter</Button>
             </div>
           </Grid.Col>
           <Grid.Col span={12}>
             <Button
               className="mb-3"
-              component="a"
-              href="/#"
-              data-disabled
-              onClick={(event) => event.preventDefault()}
+              loading={isSubmitting}
+              loaderProps={{ type: "dots" }}
+              disabled={selectedRecords?.length === 0}
+              onClick={() => handleBulkAssign()}
             >
               Assign
             </Button>
@@ -262,61 +217,83 @@ const Index = () => {
                 striped
                 columns={[
                   {
-                    title: "SL",
-                    accessor: "na",
-                    noWrap: true,
-                    sortable: false,
-                    render: (_, index) =>
-                      (currentPage - 1) * pageSize + index + 1,
-                  },
-                  {
                     accessor: "employee",
                     title: "Employee",
                     sortable: false,
-                    render: ({ image }) => (
-                      <div className="text-center">
-                        <img
-                          src={getStoragePath(image)}
-                          alt="img"
-                          className="table_user_img"
-                        />
-                      </div>
+                    width: 170,
+                    render: ({
+                      id,
+                      photo,
+                      first_name,
+                      last_name,
+                      official_id,
+                    }) => (
+                      <Link
+                        href={`/profile/${id}`}
+                        className="d-flex justify-content-start align-items-center text-decoration-none color-inherit"
+                      >
+                        <span className="table_user_img">
+                          <img
+                            src={
+                              photo
+                                ? getStoragePath(photo)
+                                : "/default-profile.png"
+                            }
+                            alt=""
+                            onError={(e) => {
+                              e.target.src = "/default-profile.png";
+                            }}
+                          />
+                        </span>
+                        <div className="d-flex flex-column justify-content-center ms-2 table_user">
+                          <h6 className="table_user_name">
+                            {getFullName(first_name, last_name)}
+                          </h6>
+                          {official_id && (
+                            <span className="table_user_id">{official_id}</span>
+                          )}
+                        </div>
+                      </Link>
                     ),
                   },
-
                   {
                     accessor: "designation",
                     title: "Designation",
-                    sortable: true,
+                    width: 250,
                     // visibleMediaQuery: aboveXs,
+                    render: ({ designation }) => designation?.name || "N/A",
                   },
                   {
                     accessor: "department",
                     title: "Department",
-                    noWrap: true,
-                    sortable: true,
+                    width: 250,
+                    // visibleMediaQuery: aboveXs,
+                    render: ({ departmenttwo }) =>
+                      departmenttwo?.[0]?.name || "N/A",
                   },
                   {
-                    accessor: "contactNo",
-                    title: "Contact No.",
-                    noWrap: true,
-                    sortable: true,
-                  },
-                  {
-                    accessor: "employeeType",
+                    accessor: "employee_type",
                     title: "Employee Type",
+                    width: 170,
+                    noWrap: true,
+                    sortable: true,
+                    render: ({ employee_type }) => employee_type || "N/A",
+                  },
+                  {
+                    accessor: "deductions",
+                    title: "Deductions",
                     noWrap: true,
                     sortable: true,
                   },
                 ]}
                 fetching={isLoading}
-                records={apiData?.results || []}
+                records={apiData?.data?.result || []}
                 page={currentPage}
                 onPageChange={setCurrentPage}
-                totalRecords={apiData?.count}
+                totalRecords={apiData?.data?.count || 0}
                 recordsPerPage={pageSize}
                 sortStatus={sortStatus}
-                // onSortStatusChange={handleSortStatusChange}
+                onSortStatusChange={handleSortStatusChange}
                 selectedRecords={selectedRecords}
                 onSelectedRecordsChange={setSelectedRecords}
                 // recordsPerPageOptions={PAGE_SIZES}

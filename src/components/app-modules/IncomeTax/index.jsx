@@ -57,7 +57,7 @@ const index = () => {
     isLoading,
     mutate,
   } = useSWR(
-    `/employee/?page=${currentPage}&page_size=${pageSize}&column_accessor=${sortStatus.columnAccessor}&direction=${sortStatus.direction}`,
+    `/api/payroll/get-payrolltax/?page=${currentPage}&page_size=${pageSize}&column_accessor=${sortStatus.columnAccessor}&direction=${sortStatus.direction}`,
     fetcher,
     {
       errorRetryCount: 2,

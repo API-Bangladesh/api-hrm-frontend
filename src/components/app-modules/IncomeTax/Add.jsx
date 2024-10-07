@@ -1,19 +1,19 @@
-import React from "react";
-import { DateInput } from "@mantine/dates";
+import React, { useState } from "react";
+import { useForm } from "@mantine/form";
 import {
   Modal,
   TextInput,
-  Textarea,
   Button,
   Select,
   Group,
-  Grid,
   NumberInput,
-  Checkbox,
 } from "@mantine/core";
-import { FiFile } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { submit } from "@/lib/submit";
 
-const Index = ({ opened, close }) => {
+const Index = ({ opened, close, mutate }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   return (
     <>
       <Modal
