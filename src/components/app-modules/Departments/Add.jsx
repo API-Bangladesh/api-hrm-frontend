@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import useSWR from "swr";
 import { useForm } from "@mantine/form";
 import {
   Modal,
   TextInput,
-  Textarea,
   Button,
   Select,
   Group,
@@ -113,24 +112,23 @@ const Index = ({ opened, close, mutate }) => {
 
       // const response = res.json();
       if (response?.status === "success") {
-        toast.success("Department created successfully");
-        mutate();
+        setIsSubmitting(false);
         form.reset();
         close();
-      } else {
-        toast.error(
-          response?.status === "error"
-            ? response?.message[0]
-            : "Error submitting form"
-        );
-      }
-      setTimeout(() => {
-        setIsSubmitting(false);
         mutate();
-      }, 500);
+        toast.success("Department created successfully");
+      } else {
+        setIsSubmitting(false);
+        if (response?.status === "error" && Array.isArray(response.message)) {
+          response.message.forEach((msg) => {
+            toast.error(msg);
+          });
+        } else {
+          toast.error("Error submitting form");
+        }
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("Error submitting form");
       setTimeout(() => {
         setIsSubmitting(false);
       }, 500);
@@ -196,7 +194,6 @@ const Index = ({ opened, close, mutate }) => {
               <TextInput
                 label="Email"
                 placeholder="Email"
-                required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("email")}
               />
@@ -205,7 +202,6 @@ const Index = ({ opened, close, mutate }) => {
               <TextInput
                 label="Phone"
                 placeholder="Phone"
-                required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("phone")}
               />
@@ -214,7 +210,6 @@ const Index = ({ opened, close, mutate }) => {
               <TextInput
                 label="Fax"
                 placeholder="Fax"
-                required={true}
                 disabled={isSubmitting}
                 {...form.getInputProps("fax")}
               />

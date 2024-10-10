@@ -139,10 +139,10 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       // console.log(response);
 
       if (response?.status === "success") {
-        toast.success("Department updated successfully");
-        mutate();
-        form.reset();
+        setIsSubmitting(false);
         close();
+        mutate();
+        toast.success("Department updated successfully");
       } else {
         toast.error(
           response?.status === "error"
@@ -150,7 +150,6 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
             : "Error submitting form"
         );
       }
-
       setTimeout(() => {
         setIsSubmitting(false);
         mutate();
