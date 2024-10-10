@@ -346,6 +346,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Employee Type"
+                    searchable
                     placeholder="Employee Type"
                     data={employeeTypes}
                     {...form.getInputProps("employee_type")}
@@ -362,6 +363,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Company"
+                    searchable
                     placeholder="Company"
                     data={companies}
                     {...form.getInputProps("company")}
@@ -379,6 +381,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Branch"
+                    searchable
                     placeholder="Branch"
                     data={branches}
                     {...form.getInputProps("branch")}
@@ -396,6 +399,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Department"
+                    searchable
                     placeholder="Department"
                     data={departments}
                     {...form.getInputProps("department")}
@@ -413,6 +417,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Designation"
+                    searchable
                     placeholder="Designation"
                     data={designations}
                     {...form.getInputProps("designation")}
@@ -434,6 +439,7 @@ const OfficeDetails = forwardRef(
                     }}
                     // mt="sm"
                     // label="Default Shift"
+                    searchable
                     placeholder="Default Shift"
                     data={shifts}
                     {...form.getInputProps("shift")}
@@ -448,6 +454,7 @@ const OfficeDetails = forwardRef(
                       root: "w-100",
                       wrapper: "cust_iputWrapper",
                     }}
+                    searchable
                     placeholder="Grade"
                     data={grades}
                     {...form.getInputProps("grade")}
