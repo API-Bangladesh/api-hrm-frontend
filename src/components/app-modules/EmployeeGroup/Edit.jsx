@@ -10,17 +10,17 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      title: "",
+      name: "",
     },
     validate: {
-      title: (value) => (!value ? "Title is required" : null),
+      name: (value) => (!value ? "Name is required" : null),
     },
   });
 
   useEffect(() => {
     if (item) {
       form.setValues({
-        title: item.title || "",
+        name: item?.name || "",
       });
     }
   }, [item]);
@@ -33,7 +33,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
 
     try {
       const response = await update(
-        `/api/device/update-group/${item.id}`,
+        `/api/user/update-ethnicgroup/${item.id}`,
         values
       );
 
@@ -89,7 +89,7 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
                 placeholder="Employee Group"
                 required={true}
                 disabled={isSubmitting}
-                {...form.getInputProps("title")}
+                {...form.getInputProps("name")}
               />
             </Grid.Col>
           </Grid>

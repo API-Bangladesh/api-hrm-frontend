@@ -28,11 +28,11 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [sortStatus, setSortStatus] = useState({
-    columnAccessor: "title",
+    columnAccessor: "name",
     direction: "asc", // desc
   });
 
-  let apiUrl = `/api/device/get-group/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
+  let apiUrl = `/api/user/get-ethnicgroup/?page=${currentPage}&page_size=${pageSize}&column_accessor=${
     sortStatus?.direction === "desc" ? "-" : ""
   }${sortStatus.columnAccessor}`;
 
@@ -95,14 +95,14 @@ const Index = () => {
     },
     {
       // for table display
-      accessor: "title",
-      title: "Title",
+      accessor: "name",
+      title: "Name",
       // noWrap: true,
       sortable: true,
       // visibleMediaQuery: aboveXs,
-      render: ({ title }) => title || "N/A",
+      render: ({ name }) => name || "N/A",
       // for export
-      key: "title",
+      key: "name",
     },
     {
       // for table display
@@ -151,8 +151,8 @@ const Index = () => {
       value: "na",
     },
     {
-      label: "Title",
-      value: "title",
+      label: "Name",
+      value: "name",
     },
     {
       label: "Actions",
@@ -162,12 +162,12 @@ const Index = () => {
 
   const [selectedOptions, setSelectedOptions] = useState([
     "na",
-    "title",
+    "name",
     "actions",
   ]);
 
   const handleChange = (keys) => {
-    const updatedKeys = [...new Set(["na", "title", "actions", ...keys])];
+    const updatedKeys = [...new Set(["na", "name", "actions", ...keys])];
 
     const reorderedOptions = visibleColumns.filter((column) =>
       updatedKeys.includes(column.value)
@@ -186,7 +186,7 @@ const Index = () => {
   // const [dataToExport, setDataToExport] = useState(null);
 
   const getExportDataUrl = () => {
-    let url = `/api/device/get-group/?column_accessor=${
+    let url = `/api/user/get-ethnicgroup/?column_accessor=${
       sortStatus?.direction === "desc" ? "-" : ""
     }${sortStatus.columnAccessor}`;
 
