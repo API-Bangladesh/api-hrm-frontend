@@ -10,10 +10,10 @@ const Index = ({ opened, close, mutate }) => {
   const form = useForm({
     mode: "uncontrolled",
     initialValues: {
-      title: "",
+      name: "",
     },
     validate: {
-      title: (value) => (!value ? "Title is required" : null),
+      name: (value) => (!value ? "Name is required" : null),
     },
   });
 
@@ -25,7 +25,7 @@ const Index = ({ opened, close, mutate }) => {
     setIsSubmitting(true);
 
     try {
-      const response = await submit("/api/device/add-group/", values);
+      const response = await submit("/api/user/add-ethnicgroup/", values);
 
       if (response?.status === "success") {
         // console.log(response);
@@ -75,7 +75,7 @@ const Index = ({ opened, close, mutate }) => {
                 placeholder="Employee Group"
                 required={true}
                 disabled={isSubmitting}
-                {...form.getInputProps("title")}
+                {...form.getInputProps("name")}
               />
             </Grid.Col>
           </Grid>
