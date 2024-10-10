@@ -60,21 +60,21 @@ const OfficeDetails = forwardRef(
           value && !validatePhoneNumber(value) ? "Invalid phone number" : null,
         password: (value) => (!value ? "Password is required" : null),
         employee_type: (value) => (!value ? "Employee Type is required" : null),
-        company: (value) => (!value ? "Company is required" : null),
-        branch: (value) => (!value ? "Branch is required" : null),
-        department: (value) => (!value ? "Department is required" : null),
+        // company: (value) => (!value ? "Company is required" : null),
+        // branch: (value) => (!value ? "Branch is required" : null),
+        // department: (value) => (!value ? "Department is required" : null),
         designation: (value) => (!value ? "Designation is required" : null),
         shift: (value) => (!value ? "Shift is required" : null),
         ethnic_group: (value) =>
           !value || !value.length ? "Group is required" : null,
         joining_date: (value) => (!value ? "Joining date is required" : null),
-        supervisor: (value) => (!value ? "Supervisor is required" : null),
-        expense_approver: (value) =>
-          !value ? "Expense approver is required" : null,
-        leave_approver: (value) =>
-          !value ? "Leave approver is required" : null,
-        shift_request_approver: (value) =>
-          !value ? "Shift request approver is required" : null,
+        // supervisor: (value) => (!value ? "Supervisor is required" : null),
+        // expense_approver: (value) =>
+        //   !value ? "Expense approver is required" : null,
+        // leave_approver: (value) =>
+        //   !value ? "Leave approver is required" : null,
+        // shift_request_approver: (value) =>
+        //   !value ? "Shift request approver is required" : null,
       },
     });
 
@@ -353,9 +353,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Company</span>
-                  </div>
+                  <div className="cust_iputLabel">Company</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -371,9 +369,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Branch</span>
-                  </div>
+                  <div className="cust_iputLabel">Branch</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -389,9 +385,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Department</span>
-                  </div>
+                  <div className="cust_iputLabel">Department</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -524,9 +518,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Supervisor</span>
-                  </div>
+                  <div className="cust_iputLabel">Supervisor</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -544,9 +536,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Expense Approver</span>
-                  </div>
+                  <div className="cust_iputLabel">Expense Approver</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -564,9 +554,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Leave Approver</span>
-                  </div>
+                  <div className="cust_iputLabel">Leave Approver</div>
                   <Select
                     classNames={{
                       root: "w-100",
@@ -584,9 +572,7 @@ const OfficeDetails = forwardRef(
                   />
                 </div>
                 <div className="d-flex align-items-start w-100 cust_mt">
-                  <div className="cust_iputLabel">
-                    <span className="requiredInput">Shift Approver</span>
-                  </div>
+                  <div className="cust_iputLabel">Shift Approver</div>
                   <Select
                     classNames={{
                       root: "w-100",
