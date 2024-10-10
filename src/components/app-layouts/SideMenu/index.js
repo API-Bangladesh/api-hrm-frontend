@@ -518,6 +518,14 @@ const Page = () => {
                       <ul className="text-decoration-none mb-0 sidenav_submenu">
                         <li className="text-capitalize text-decoration-none sidenav_sub_item">
                           <Link
+                            href="/approval-settings"
+                            className="text-decoration-none subMenu"
+                          >
+                            Approval Settings
+                          </Link>
+                        </li>
+                        <li className="text-capitalize text-decoration-none sidenav_sub_item">
+                          <Link
                             href="/general-settings"
                             className="text-decoration-none subMenu"
                           >
