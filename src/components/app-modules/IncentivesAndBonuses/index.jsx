@@ -16,12 +16,7 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { fetcher, getData } from "@/lib/fetch";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
 import { constants } from "@/lib/config";
-import {
-  generateAddressString,
-  generateStringFromArray,
-  getDate,
-  getFullName,
-} from "@/lib/helper";
+import { generateStringFromArray, getDate, getFullName } from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import AddButton from "@/components/utils/AddButton";
 import Add from "./Add";
@@ -106,7 +101,7 @@ const Index = () => {
       noWrap: true,
       sortable: true,
       // visibleMediaQuery: aboveXs,
-      render: ({ title }) => title || "N/A",
+      render: ({ title }) => title || "",
       // for export
       key: "title",
     },
@@ -116,11 +111,13 @@ const Index = () => {
       title: "Employees",
       noWrap: true,
       // visibleMediaQuery: aboveXs,
-      render: ({ users_incentivebonus }) =>
-        users_incentivebonus?.length
+      render: ({ incentivebonususer }) =>
+        incentivebonususer?.length
           ? generateStringFromArray(
-              users_incentivebonus
-                ?.map((user) => getFullName(user?.first_name, user?.last_name))
+              incentivebonususer
+                ?.map((user) =>
+                  getFullName(user?.user?.first_name, user?.user?.last_name)
+                )
                 .filter(Boolean)
             )
           : "",
@@ -134,7 +131,7 @@ const Index = () => {
       noWrap: true,
       sortable: true,
       // visibleMediaQuery: aboveXs,
-      render: ({ description }) => description || "N/A",
+      render: ({ description }) => description || "",
       // for export
       key: "description",
     },
@@ -144,7 +141,7 @@ const Index = () => {
       title: "Amount Type",
       // visibleMediaQuery: aboveXs,
       sortable: true,
-      render: ({ amount_type }) => amount_type || "N/A",
+      render: ({ amount_type }) => amount_type || "",
       // for export
       key: "amount_type",
     },

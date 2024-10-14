@@ -16,6 +16,8 @@ import {
 import { toast } from "react-toastify";
 import { submit } from "@/lib/submit";
 import { fetcher } from "@/lib/fetch";
+import { getFullName, formatDateToYYYYMMDD } from "@/lib/helper";
+import UserSelectItem from "@/components/utils/UserSelectItem";
 
 const Index = ({ opened, close, mutate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,20 +30,151 @@ const Index = ({ opened, close, mutate }) => {
       amount_type: null,
       amount: null,
       issuing_date: null,
-      disbursment_date: null,
+      // disbursment_date: null,
       company: [],
       branch: [],
       department: [],
+      grade: [],
+      designation: [],
       user: [],
     },
     validate: {
       // title: (value) => (!value ? "Title is required" : null),
-      // min_income: (value) => (!value ? "Min Income is required" : null),
-      // max_income: (value) => (!value ? "Max Income is required" : null),
-      // ethnicgroup: (value) => (!value ? "Group is required" : null),
-      // percentage: (value) => (!value ? "Percentage is required" : null),
     },
   });
+
+  const {
+    data: companyData,
+    error: companyError,
+    isLoading: isCompanyLoading,
+  } = useSWR(`/api/company/get-company/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const companies = companyData?.data?.result?.map((item) => ({
+    label: item?.basic_information?.name?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
+  const {
+    data: branchesData,
+    error: branchesError,
+    isLoading: isBranchesLoading,
+  } = useSWR(`/api/branch/get-branch/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const branches = branchesData?.data?.result?.map((item) => ({
+    label: item?.name?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
+  const {
+    data: departmentsData,
+    error: departmentsError,
+    isLoading: isDepartmentsLoading,
+  } = useSWR(`/api/department/get-department/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const departments = departmentsData?.data?.result?.map((item) => ({
+    label: item?.name?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
+  const {
+    data: employeeData,
+    error: employeeError,
+    isLoading: employeeIsFetchLoading,
+  } = useSWR(`/api/user/get-employee/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
+
+  const employees = employeeData?.data.result.map((item) => ({
+    label: [getFullName(item?.first_name, item?.last_name), item?.official_id]
+      .filter(Boolean)
+      .join(" - "),
+    firstName: item?.first_name || "",
+    lastName: item?.last_name || "",
+    officialID: item?.official_id,
+    image: item?.photo,
+    value: item?.id.toString() || "",
+  }));
+
+  const {
+    data,
+    error,
+    isLoading: isFetchLoading,
+  } = useSWR(`/api/user/get-grade/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+    revalidateOnFocus: false,
+  });
+
+  const grades = data?.data?.result?.map((item) => ({
+    label: item?.name?.toString() || "",
+    value: item?.id?.toString() || "",
+  }));
+
+  const {
+    data: designationsData,
+    error: designationsError,
+    isLoading: isDesignationsLoading,
+  } = useSWR(`/api/user/get-dsignation/`, fetcher, {
+    errorRetryCount: 2,
+    keepPreviousData: true,
+  });
+
+  const designations = designationsData?.data?.result?.map((item) => ({
+    label: item?.name?.toString() || "",
+    value: item?.id.toString() || "",
+  }));
+
+  const handleSubmit = async (values) => {
+    const formattedDate = formatDateToYYYYMMDD(values?.issuing_date);
+
+    const formattedValues = {
+      ...values,
+      issuing_date: formattedDate,
+    };
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await submit(
+        "/api/payroll/add-incentivebonus/",
+        formattedValues
+      );
+
+      if (response?.status === "success") {
+        // console.log(response);
+        setIsSubmitting(false);
+        form.reset();
+        close();
+        mutate();
+        toast.success("Incentives And Bonuses created successfully");
+      } else {
+        setIsSubmitting(false);
+        if (response?.status === "error" && Array.isArray(response.message)) {
+          response.message.forEach((msg) => {
+            toast.error(msg);
+          });
+        } else {
+          toast.error("Error submitting form");
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setTimeout(() => {
+        setIsSubmitting(false);
+      }, 500);
+    }
+  };
 
   return (
     <Modal
@@ -56,19 +189,33 @@ const Index = ({ opened, close, mutate }) => {
       size="xl"
       padding="40px"
     >
-      <form>
+      <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Grid classNames={{ root: "gutterX", col: "gutterCol" }}>
           <Grid.Col span={{ base: 12, lg: 6 }}>
-            <TextInput label="Title" placeholder="Title" />
+            <TextInput
+              label="Title"
+              placeholder="Title"
+              required
+              disabled={isSubmitting}
+              {...form.getInputProps("title")}
+            />
           </Grid.Col>
           <Grid.Col span={{ base: 12, lg: 6 }}>
-            <TextInput label="Description" placeholder="Description" />
+            <TextInput
+              label="Description"
+              placeholder="Description"
+              disabled={isSubmitting}
+              {...form.getInputProps("description")}
+            />
           </Grid.Col>
           <Grid.Col span={{ base: 12, lg: 6 }}>
             <Select
               label="Amount Type"
-              placeholder="Pick value"
-              data={["Fixed", "Percentage"]}
+              placeholder="Amount Type"
+              data={["Fixed Amount", "Percentage"]}
+              required
+              disabled={isSubmitting}
+              {...form.getInputProps("amount_type")}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, lg: 6 }}>
@@ -77,6 +224,9 @@ const Index = ({ opened, close, mutate }) => {
               rightSection={<></>}
               rightSectionWidth={0}
               placeholder="Amount"
+              required
+              disabled={isSubmitting}
+              {...form.getInputProps("amount")}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, lg: 6 }}>
@@ -84,6 +234,9 @@ const Index = ({ opened, close, mutate }) => {
               valueFormat="DD MMM YYYY"
               label="Issuing Date"
               placeholder="DD MMM YYYY"
+              required
+              disabled={isSubmitting}
+              {...form.getInputProps("issuing_date")}
             />
           </Grid.Col>
         </Grid>
@@ -94,52 +247,84 @@ const Index = ({ opened, close, mutate }) => {
               <MultiSelect
                 label="Employees"
                 placeholder="Employees"
-                data={["Jiaur Rahman", "Nazmul Hussain", "Roki Islam"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={employees}
+                disabled={isSubmitting}
+                {...form.getInputProps("user")}
+                renderOption={UserSelectItem}
               />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, lg: 6 }}>
-              <Select
+              <MultiSelect
                 label="Company"
                 placeholder="Company"
-                data={["Api solutions ltd.", "Api solutions ltd. 2"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={companies}
+                disabled={isSubmitting}
+                {...form.getInputProps("company")}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
-              <Select
+              <MultiSelect
                 label="Branch"
                 placeholder="Branch"
-                data={["Banani", "Mirpur"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={branches}
+                disabled={isSubmitting}
+                {...form.getInputProps("branch")}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
-              <Select
+              <MultiSelect
                 label="Department"
                 placeholder="Department"
-                data={["Devlopment", "Marketing"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={departments}
+                disabled={isSubmitting}
+                {...form.getInputProps("department")}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
-              <Select
+              <MultiSelect
                 label="Employee Grade"
                 placeholder="Employee Grade"
-                data={["A", "B"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={grades}
+                disabled={isSubmitting}
+                {...form.getInputProps("grade")}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, lg: 6 }}>
-              <Select
+              <MultiSelect
                 label="Designation"
                 placeholder="Designation"
-                data={["Frontend Developer", "Backend Developer"]}
+                searchable
+                nothingFoundMessage="Nothing found..."
+                hidePickedOptions
+                data={designations}
+                disabled={isSubmitting}
+                {...form.getInputProps("designation")}
               />
             </Grid.Col>
           </Grid>
         </Fieldset>
+
         <Group mt="xl" justify="flex-end">
           <Button
             type="submit"
-            //   loading={isSubmitting}
-            //   loaderProps={{ type: "dots" }}
+            loading={isSubmitting}
+            loaderProps={{ type: "dots" }}
           >
             Save
           </Button>
