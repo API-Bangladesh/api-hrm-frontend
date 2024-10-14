@@ -58,6 +58,7 @@ const initialData = {
     branch: null,
     department: null,
     designation: null,
+    is_manager_or_above: true,
     shift: null,
     grade: null,
     role_permission: [],

@@ -32,7 +32,6 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
       max_income: (value) => (!value ? "Max Income is required" : null),
       ethnicgroup: (value) => (!value ? "Group is required" : null),
       percentage: (value) => (!value ? "Percentage is required" : null),
-      // date: (value) => (!value ? "Date is required" : null),
     },
   });
 
@@ -65,14 +64,12 @@ const Index = ({ opened, close, item, setItem, mutate }) => {
   }));
 
   const handleSubmit = async (values) => {
-    const formattedValues = { ...values };
-
     setIsSubmitting(true);
 
     try {
       const response = await update(
         `/api/payroll/update-payrolltax/${item?.id}`,
-        formattedValues
+        values
       );
 
       if (response?.status === "success") {

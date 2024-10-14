@@ -14,7 +14,7 @@ const Index = ({ opened, close, item, mutate }) => {
 
       if (res?.status === "success") {
         toast.success("Item deleted successfully");
-        mutate(); // Re-fetch the data
+        mutate();
         close();
       } else {
         console.log(res);

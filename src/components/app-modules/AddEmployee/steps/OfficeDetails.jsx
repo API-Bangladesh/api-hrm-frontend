@@ -13,6 +13,7 @@ import {
   PasswordInput,
   MultiSelect,
   Grid,
+  Checkbox,
 } from "@mantine/core";
 import { toast } from "react-toastify";
 import { fetcher, getData } from "@/lib/fetch";
@@ -416,6 +417,15 @@ const OfficeDetails = forwardRef(
                     data={designations}
                     {...form.getInputProps("designation")}
                     key={form.key("designation")}
+                  />
+                </div>
+                <div className="d-flex align-items-start w-100 cust_mt">
+                  <div className="cust_iputLabel"></div>
+                  <Checkbox
+                    label="Is Managerial Employee?"
+                    {...form.getInputProps("is_manager_or_above", {
+                      type: "checkbox",
+                    })}
                   />
                 </div>
               </Box>
