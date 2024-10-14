@@ -32,7 +32,6 @@ const Index = ({ opened, close, mutate }) => {
       max_income: (value) => (!value ? "Max Income is required" : null),
       ethnicgroup: (value) => (!value ? "Group is required" : null),
       percentage: (value) => (!value ? "Percentage is required" : null),
-      // date: (value) => (!value ? "Date is required" : null),
     },
   });
 
@@ -52,22 +51,10 @@ const Index = ({ opened, close, mutate }) => {
   }));
 
   const handleSubmit = async (values) => {
-    // const formattedDate = values.date
-    //   ? values.date.toISOString().split("T")[0]
-    //   : null;
-
-    // const formattedDate = formatDateToYYYYMMDD(values?.date);
-
-    // const formattedValues = { ...values, date: formattedDate };
-    const formattedValues = { ...values };
-
     setIsSubmitting(true);
 
     try {
-      const response = await submit(
-        "/api/payroll/add-payrolltax/",
-        formattedValues
-      );
+      const response = await submit("/api/payroll/add-payrolltax/", values);
 
       if (response?.status === "success") {
         // console.log(response);

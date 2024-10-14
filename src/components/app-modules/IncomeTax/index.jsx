@@ -16,7 +16,6 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { fetcher, getData } from "@/lib/fetch";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
 import { constants } from "@/lib/config";
-import { getDate } from "@/lib/helper";
 import Breadcrumb from "@/components/utils/Breadcrumb";
 import AddButton from "@/components/utils/AddButton";
 import Add from "./Add";
@@ -100,8 +99,7 @@ const Index = () => {
       title: "Title",
       noWrap: true,
       sortable: true,
-      // visibleMediaQuery: aboveXs,
-      render: ({ title }) => title || "N/A",
+      render: ({ title }) => title || "",
       // for export
       key: "title",
     },
@@ -111,8 +109,7 @@ const Index = () => {
     //   title: "Description",
     //   noWrap: true,
     //   sortable: true,
-    //   // visibleMediaQuery: aboveXs,
-    //   render: ({ description }) => description || "N/A",
+    //   render: ({ description }) => description || "",
     //   // for export
     //   key: "description",
     // },
@@ -121,8 +118,9 @@ const Index = () => {
       accessor: "min_income",
       title: "Min. Income",
       noWrap: true,
-      // visibleMediaQuery: aboveXs,
-      render: ({ min_income }) => min_income || "N/A",
+      sortable: true,
+
+      render: ({ min_income }) => min_income || "",
       // for export
       key: "min_income",
     },
@@ -130,9 +128,8 @@ const Index = () => {
       // for table display
       accessor: "max_income",
       title: "Max. Income",
-      // visibleMediaQuery: aboveXs,
       sortable: true,
-      render: ({ max_income }) => max_income || "N/A",
+      render: ({ max_income }) => max_income || "",
       // for export
       key: "max_income",
     },
@@ -140,7 +137,6 @@ const Index = () => {
       // for table display
       accessor: "percentage",
       title: "Percentage",
-      // visibleMediaQuery: aboveXs,
       sortable: true,
       render: ({ percentage }) => percentage || "",
       // for export
@@ -150,8 +146,6 @@ const Index = () => {
       // for table display
       accessor: "ethnicgroup",
       title: "Employee Group",
-      // visibleMediaQuery: aboveXs,
-      sortable: true,
       render: ({ ethnicgroup }) => ethnicgroup?.name || "",
       // for export
       key: "ethnicgroup",
