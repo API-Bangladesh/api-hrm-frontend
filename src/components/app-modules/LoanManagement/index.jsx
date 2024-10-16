@@ -20,7 +20,7 @@ import { RiFileExcel2Line } from "react-icons/ri";
 import { LuPlus } from "react-icons/lu";
 import { HiDotsVertical } from "react-icons/hi";
 import { BiMessageSquareEdit } from "react-icons/bi";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdOutlineRemoveRedEye } from "react-icons/md";
 import { fetcher, getData } from "@/lib/fetch";
 import { exportToPDF, exportToExcel, exportToCSV } from "@/lib/export";
 import { constants } from "@/lib/config";
@@ -30,6 +30,7 @@ import AddButton from "@/components/utils/AddButton";
 import Add from "./Add";
 import Edit from "./Edit";
 import Delete from "./Delete";
+import Installment from "./Installment";
 import FilterModal from "./FilterModal";
 
 const PAGE_SIZES = constants.PAGE_SIZES;
@@ -82,8 +83,14 @@ const Index = () => {
   const [payrollOpened, { open: payrollOpen, close: payrollClose }] =
     useDisclosure(false);
 
+  const [
+    installmentOpened,
+    { open: installmentOpen, close: installmentClose },
+  ] = useDisclosure(false);
+
   const [selectedEditItem, setSelectedEditItem] = useState(null);
   const [selectedDeleteItem, setSelectedDeleteItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     if (selectedEditItem) {
@@ -253,6 +260,24 @@ const Index = () => {
               }}
             >
               Delete
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<MdOutlineRemoveRedEye className="fs-6" />}
+              onClick={() => {
+                setSelectedItem(item);
+                installmentOpen();
+              }}
+            >
+              Installment
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<MdOutlineRemoveRedEye className="fs-6" />}
+              onClick={() => {
+                setSelectedItem(item);
+                installmentOpen();
+              }}
+            >
+              Manage
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
@@ -558,6 +583,13 @@ const Index = () => {
 
   return (
     <>
+      <Installment
+        opened={installmentOpened} //
+        close={installmentClose}
+        item={selectedItem}
+        mutate={mutate}
+      />
+
       <Add
         opened={addOpened} //
         close={addClose}
